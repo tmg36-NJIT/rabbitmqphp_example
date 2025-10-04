@@ -12,7 +12,7 @@ class rabbitMQServer
 	private $VHOST;
 	private $exchange;
 	private $queue;
-	private $routing_key = '*';
+	private $routing_key = '';
 	private $exchange_type = "topic";
 	private $auto_delete = false;
 
@@ -117,7 +117,8 @@ class rabbitMQServer
 
 			$this->conn_queue = new AMQPQueue($channel);
 			$this->conn_queue->setName($this->queue);
-			$this->conn_queue->bind($exchange->getName(),$this->routing_key);
+			$this->conn_queue->bind($exchange->getName(), "login");
+                        $this->conn_queue->bind($exchange->getName(), "register");
 
 			$this->conn_queue->consume(array($this,'process_message'));
 
@@ -144,7 +145,7 @@ class rabbitMQClient
 	private $VHOST;
 	private $exchange;
 	private $queue;
-	private $routing_key = '*';
+	private $routing_key = '';
 	private $response_queue = array();
 	private $exchange_type = "topic";
 
@@ -269,4 +270,3 @@ class rabbitMQClient
 	}
 }
 ?>
-
