@@ -35,5 +35,10 @@ $req=[
 
 $res=$mq->send_request($req); //not sure yet but might switch to publish function if apache hangs during testing
 
+if (isset($res['success']) {
+$okMsg=htmlspecialchars($res['messagr']); }
+else {
+$errs[]=htmlspecialchars($res['message'] 'try again')
+}
 ?>
 
