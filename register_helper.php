@@ -1,1 +1,11 @@
 // To store the main logic for registration form data to send to the msg broker. - tmg
+<?php
+ini_set('display_errors',1);
+error_reporting(E_ALL);
+session_start()
+require_once('path.inc')
+require_once('get_host_info.inc')
+require_once('rabbitMQLib.inc')
+
+
+?>
