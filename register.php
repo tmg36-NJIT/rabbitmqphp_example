@@ -58,3 +58,15 @@ error_log('register.php-> ' . $e->getMessage());
 <head><title>Sign Up</title></head>
 <body>
 <h2 style="text-align:center;">Create Account</h2>
+
+<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
+<label for="username">Enter Username:</label>
+<input type="text" id="username" name="username" required><br><br>
+
+<label for="password">Enter Password:</label>
+<input type="password" id="password" name="password" required><br><br>
+
+<button type="submit">Click here to Register.w</button>
+</form>
+</body>
+</html>
