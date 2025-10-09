@@ -40,5 +40,10 @@ $okMsg=htmlspecialchars($res['message']); }
 else {
 $errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration has failed. Try again please!')
 }
+
+//some additional error logging
+} catch(Exception $e) {
+$errs[]='Hello!! Try this again later. Something unexpected occurred."
+error_log('register.php-> ' . $e->getMessage());
 ?>
 
