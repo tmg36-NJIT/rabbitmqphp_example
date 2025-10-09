@@ -70,6 +70,7 @@ body {
   justify-content: center;
 
 }
+h2 { text-align: center;margin 0 0 13px; }
 </style>
 
 
