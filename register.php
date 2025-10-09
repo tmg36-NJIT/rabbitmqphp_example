@@ -10,7 +10,11 @@ require_once('/var/www/html/rabbitMQLib.inc');
 $errs = [];
 $okMsg = '';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$user=($_POST['username'] ?? '');
+$pass=($_POST['password'] ?? '');
 
+}
 
 ?>
 
