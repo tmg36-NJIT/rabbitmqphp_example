@@ -15,7 +15,7 @@ $user = $_SESSION['username'];
 <body>
 <h2>Welcome, <?php echo htmlspecialchars($user); ?>!</h2>
 <p>Nice. You are logged in, successfully.</p>
-<a href=" ">Logout</a>
+<a href="logout.php">Logout</a>
 </body>
 </html>
 
