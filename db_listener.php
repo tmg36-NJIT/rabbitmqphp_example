@@ -16,7 +16,7 @@ function doLoginDB($username, $password) {
 	$stmt->bind_param("ss", $username, $password);
 	$stmt ->execute();
 	$result = $stmt->get_result();
-	$found=$stmt->($result && $result->num_rows > 0);
+	$found=($result && $result->num_rows > 0);
 	$stmt->close();
 	$mysqli->close();
 	 if($found) {return ['success' => true, 'message' => 'Login successful'];
@@ -26,7 +26,7 @@ function doLoginDB($username, $password) {
 function doRegisterDB($username, $password){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed'];}
-	$stmt = $mysqli->prepare("SELECT * FROM users WHERE username=? AND password=?");
+	$stmt = $mysqli->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
 	if(!$stmt) {
 	$mysqli->close();
 	return ['success' => false, 'message' => 'query prep failed']; }
