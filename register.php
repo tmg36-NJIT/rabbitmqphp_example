@@ -45,5 +45,16 @@ $errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration h
 } catch(Exception $e) {
 $errs[]='Hello! Something unexpected occurred. Please try again later.';
 error_log('register.php-> ' . $e->getMessage());
-?>
+}
+}
+}
 
+?>
+// front end layout section
+
+
+<!DOCTYPE html>
+<html>
+<head><title>Sign Up</title></head>
+<body>
+<h2 style="text-align:center;">Create Account</h2>
