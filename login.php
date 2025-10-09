@@ -16,6 +16,11 @@ $user = trim($_POST['username'] ?? '');
 $pass = trim($_POST['password'] ?? '');
 if ($user === '') $errs[] = 'You need a username.';
 if ($pass === '') $errs[] = 'You need a password.'
+if (!$errs) {
+try {
+$mq = new rabbitMQClient('/var/www/html/testRabbitMQ.ini','testServer');
+$req = ['type'=>'login','username'=>$user,'password'=>$pass];
+$res = $mq->send_request($req);
 
 
 ?>
