@@ -35,10 +35,10 @@ $req=[
 
 $res=$mq->send_request($req); //not sure yet but might switch to publish function if apache hangs during testing
 
-if (isset($res['success']) {
-$okMsg=htmlspecialchars($res['messagr']); }
+if (isset($res['success']) && $res['success'] === true {
+$okMsg=htmlspecialchars($res['message']); }
 else {
-$errs[]=htmlspecialchars($res['message'] 'try again')
+$errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration has failed. Try again please!')
 }
 ?>
 
