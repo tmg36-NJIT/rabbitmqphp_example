@@ -6,15 +6,19 @@ require_once('rabbitMQLib.inc');
 
 
 function doLoginDB($username, $password) {
-         $mysqli - new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
-        if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed']; }
-        $stmt = $mysqli->prepare("SELECT * FROM users WQHERE username=? AND password=?");
-        if(!$stmt) {
-        $ mysqli->close();
-        return ['success' => flase, 'message' => 'query prep failed']; }
+	$mysqli - new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed']; }
+	$stmt = $mysqli->prepare("SELECT * FROM users WQHERE username=? AND password=?");
+	if(!$stmt) {
+	$mysqli->close();
+	return ['success' => flase, 'message' => 'query prep failed']; }
 
 	$stmt->bind_param("ss", $username, $password);
-        $success = $stmt ->execute();
+	$success = $stmt ->execute();
+	#stmt->close();
+	$mysqli->close();
+
+
 
 function requestProcessor($request) {
 	echo "Received request:";
