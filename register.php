@@ -92,6 +92,33 @@ button {
   border-radius: 4px;
   font-size: 14px;
   box-sizing: border-box;
+}
+.msg {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.msg.error {
+  color: #d63939;
+}
+
+.msg.success {
+  color: #207a2e;
+}
+button {
+  background-color: #0066cc;
+  color: #fff;
+  border: none;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #004f9e;
+}
 
 </style>
 
