@@ -12,7 +12,7 @@ class rabbitMQServer
 	private $VHOST;
 	private $exchange;
 	private $queue;
-	private $routing_key = '';
+	private $routing_key = ''; //routing key will be handled later - removed "*"
 	private $exchange_type = "topic";
 	private $auto_delete = false;
 
@@ -34,6 +34,7 @@ class rabbitMQServer
 		}
 		$this->exchange = $this->machine[$server]["EXCHANGE"];
 		$this->queue = $this->machine[$server]["QUEUE"];
+		$this->routing_key = $this->queue; //Matches routing key to queue to ensure consistency in message routing
 	}
 
 	function process_message($msg)
@@ -117,8 +118,8 @@ class rabbitMQServer
 
 			$this->conn_queue = new AMQPQueue($channel);
 			$this->conn_queue->setName($this->queue);
-			$this->conn_queue->bind($exchange->getName(), "login");
-                        $this->conn_queue->bind($exchange->getName(), "register");
+			$this->conn_queue->bind($exchange->getName(), "login"); //Routing key binded to 'login'
+                        $this->conn_queue->bind($exchange->getName(), "register"); //Routing key binded to 'register'
 
 			$this->conn_queue->consume(array($this,'process_message'));
 
@@ -145,7 +146,7 @@ class rabbitMQClient
 	private $VHOST;
 	private $exchange;
 	private $queue;
-	private $routing_key = '';
+	private $routing_key = ''; //Routing key specified earlier - removed '*'
 	private $response_queue = array();
 	private $exchange_type = "topic";
 
@@ -167,6 +168,7 @@ class rabbitMQClient
 		}
 		$this->exchange = $this->machine[$server]["EXCHANGE"];
 		$this->queue = $this->machine[$server]["QUEUE"];
+		$this->routing_key = $this->queue; //Matches routing key to queue name
 	}
 
 	function process_response($response)
