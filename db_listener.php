@@ -29,12 +29,13 @@ function doRegisterDB($username, $password){
 	$stmt = $mysqli->prepare("SELECT * FROM users WHERE username=? AND password=?");
 	if(!$stmt) {
 	$mysqli->close();
-	return ['success' => flase, 'message' => 'query prep failed']; }
+	return ['success' => false, 'message' => 'query prep failed']; }
 
 
-$stmt->bind_param("ss", $username, $password);
-$success = $stmt ->execute();
-
+	$stmt->bind_param("ss", $username, $password);
+	$success = $stmt ->execute();
+	$stmt->close();
+	$mysqli->close();
 
 
 
