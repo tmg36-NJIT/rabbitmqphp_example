@@ -1,4 +1,4 @@
-\#!/usr/bin/php
+#!/usr/bin/php
 <?php
 require_once('path.inc');
 require_once('get_host_info.inc');
@@ -23,13 +23,34 @@ function doLoginDB($username, $password) {
 	} else{return['success'=> false, 'message' => 'Invalid username and/or password']; }
 }
 
+function doRegisterDB($username, $password){
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed'];}
+	$stmt = $mysqli->prepare("SELECT * FROM users WHERE username=? AND password=?");
+	if(!$stmt) {
+	$mysqli->close();
+	return ['success' => false, 'message' => 'query prep failed']; }
+
+
+	$stmt->bind_param("ss", $username, $password);
+	$success = $stmt ->execute();
+	$stmt->close();
+	$mysqli->close();
+	if ($success) {return['success' => true, 'message' => 'You have been registered'];
+	} else { return['success' => false, 'message'=> 'registration faiued'];}
+}
+
 
 
 function requestProcessor($request) {
 	echo "Received request:";
 	 var_dump($request);
-	return ['success' => true, 'message' => 'Received request'];
+        if(!isset($request['type'])){ return['success' => flase, 'message' => 'Invalid request'];}
 }
+
+
+
+
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
 $server->process_requests('requestProcessor');
