@@ -18,3 +18,27 @@ if ($user === '') $errs[] = 'You need a username.';
 if ($pass === '') $errs[] = 'You need a password.'
 
 
+?>
+<!DOCTYPE html>
+<html>
+<head><title>Login</title></head>
+<body>
+<h2 style="text-align:center;">Login</h2>
+
+<?php if($errs): ?>
+<div style="color:red;">
+<?php foreach($errs as $e): ?>
+<p><?php echo $e; ?></p>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+<form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'); ?>">
+<label>Username:</label>
+<input type="text" name="username" required><br><br>
+<label>Password:</label>
+<input type="password" name="password" required><br><br>
+<button type="submit">Login</button>
+</form>
+</body>
+</html>
