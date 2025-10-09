@@ -11,8 +11,9 @@ $errs = [];
 $okMsg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-$user=($_POST['username'] ?? '');
-$pass=($_POST['password'] ?? '');
+$user=trim($_POST['username'] ?? '');
+$pass=trim($_POST['password'] ?? '');
+
 
 }
 
