@@ -20,7 +20,7 @@ $errs[] = 'There needs to be a username. Try again!';
 
 }
 if ($pass==''){
-$errs[]="There needs to be a password. Try again!"
+$errs[]="There needs to be a password. Try again!";
 }
 
 if(empty($errs)) {
@@ -30,12 +30,12 @@ $mq = new rabbitMQClient('/var/www/html/testRabbitMQ.ini', 'testServer'); //mq f
 $req=[
 'type'=>'register',
 'username'=>$user,
-'password' ->$pass
+'password'=>$pass
 ];
 
 $res=$mq->send_request($req); //not sure yet but might switch to publish function if apache hangs during testing
 
-if (isset($res['success']) && $res['success'] === true {
+if (isset($res['success']) && $res['success'] === true) {
 $okMsg=htmlspecialchars($res['message']); }
 else {
 $errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration has failed. Try again please!')
@@ -80,7 +80,7 @@ error_log('register.php-> ' . $e->getMessage());
 <label for="password">Enter Password:</label>
 <input type="password" id="password" name="password" required><br><br>
 
-<button type="submit">Click here to Register.w</button>
+<button type="submit">Click here to Register.</button>
 </form>
 </body>
 </html>
