@@ -82,7 +82,16 @@ h2 {
   color: #333;
   margin-bottom: 20px;
 }
-
+input[type="text"],
+input[type="password"],
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 11px;
+  border: 1px solid #c8c8c8;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
 
 </style>
 
