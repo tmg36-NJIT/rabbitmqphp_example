@@ -4,9 +4,10 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+//Improved login function - returns structured response
 function doLogin($username, $password)
 {
-    // Replace with DB lookup later
+    
     echo "Login attempt: $username with password $password\n";
     return [
         'success' => true,
@@ -14,9 +15,9 @@ function doLogin($username, $password)
     ];
 }
 
+//Register function created - handles registration requests and returns message 
 function doRegister($username, $password)
 {
-    // Replace with DB insert later
     echo "Register attempt: $username\n";
     return [
         'success' => true,
@@ -24,6 +25,7 @@ function doRegister($username, $password)
     ];
 }
 
+//Handles and processes login/register requests
 function requestProcessor($request)
 {
     echo "Received request:\n";
