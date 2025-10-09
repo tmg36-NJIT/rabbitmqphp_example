@@ -29,4 +29,16 @@ $req = [
 'password'=>$pass
 ];
 
+try {
+$res = $mq->send_request($req)
+if (!empty($res['success'])) {
+echo htmlspecialchars($res['message']);
+} else {
+echo htmlspecialchars($res['message'] ? 'Unfortunately, Could not register.')
+}
+} catch (Exception $e) {
+echo "Sorry! Looks like we had an eror wile sending request: ".$e->getMessage();
+exit;
+}
 ?>
+
