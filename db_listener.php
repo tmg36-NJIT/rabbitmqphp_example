@@ -37,7 +37,7 @@ function doRegisterDB($username, $password){
 	$stmt->close();
 	$mysqli->close();
 	if ($success) {return['success' => true, 'message' => 'You have been registered'];
-	} else { return['success' => false, 'message'=> 'registration faiued'];}
+	} else { return['success' => false, 'message'=> 'registration failed'];}
 }
 
 
@@ -50,11 +50,11 @@ function requestProcessor($request) {
 
 	switch($request['type']){
 		case 'login':
-		 return doLoginDB($request['username'], $request[password);
-		case 'register'
+		 return doLoginDB($request['username'], $request['password']);
+		case 'register':
 		 return doReisterDB($request['username'], $request['password']);
 		default:
-		 return['success' => false, message => 'invalid request'];
+		 return['success' => false, 'message' => 'invalid request'];
 }
 
 
