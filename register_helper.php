@@ -23,6 +23,10 @@ if($user==='' || $pass==='') {
 echo "Dont leave field empty. Both username & password are required.";
 exit; }
 
-
+$req = [
+'type'=>'register',
+'username'=>$user,
+'password'=>$pass
+];
 
 ?>
