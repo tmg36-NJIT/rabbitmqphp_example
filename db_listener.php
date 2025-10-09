@@ -1,4 +1,4 @@
-#!/usr/bin/php
+\#!/usr/bin/php
 <?php
 require_once('path.inc');
 require_once('get_host_info.inc');
@@ -15,8 +15,14 @@ function doLoginDB($username, $password) {
 
 	$stmt->bind_param("ss", $username, $password);
 	$stmt ->execute();
+	$result = $stmt->get_result();
+	$found=$stmt->($result && $result->num_rows > 0
 	$stmt->close();
 	$mysqli->close();
+	 if($found) {return ['success' => true, 'message' => 'Login successful'];
+	} else{return['success'=> false, 'message' => 'Invalid username and/or password']; }
+}
+
 
 
 function requestProcessor($request) {
