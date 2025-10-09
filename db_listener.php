@@ -46,6 +46,15 @@ function requestProcessor($request) {
 	echo "Received request:";
 	 var_dump($request);
         if(!isset($request['type'])){ return['success' => flase, 'message' => 'Invalid request'];}
+
+
+	switch($request['type']){
+		case 'login':
+		 return doLoginDB($request['username'], $request[password);
+		case 'register'
+		 return doReisterDB($request['username'], $request['password']);
+		default:
+		 return['success' => false, message => 'invalid request'];
 }
 
 

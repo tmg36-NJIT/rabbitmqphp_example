@@ -65,20 +65,14 @@ class rabbitMQServer
 			$this->conn_queue->setName($this->queue);
 			$this->conn_queue->setFlags(AMQP_DURABLE); //Set queue to durable
 			$this->conn_queue->declareQueue();
-			$this->conn_queue->bind($exchange->getName(), "login"); //Routing key binded to 'login'
-                        $this->conn_queue->bind($exchange->getName(), "register"); //Routing key binded to 'register'
+			$this->conn_queue->bind($exchange->getName(), $this->routing_key); //Removed hardcoded bindings, replaced with dynamic routing key
 
-			$this->conn_queue->consume(array($this,'process_message'));
+			echo " [*] Listening for messages in queue: {$this->queue}\n"; //Status message to demonstrate queue is listening 
 
-			// Loop as long as the channel has callbacks registered
-			while (count($channel->callbacks))
-			{
-				$channel->wait();
-			}
 		}
 		catch (Exception $e)
 		{
-			trigger_error("Failed to start request processor: ".$e,E_USER_ERROR); 
+			trigger_error("Failed to start request processor: " . $e, E_USER_ERROR); 
 		}
 	}
 }
