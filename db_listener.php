@@ -36,7 +36,9 @@ function doRegisterDB($username, $password){
 	$success = $stmt ->execute();
 	$stmt->close();
 	$mysqli->close();
-
+	if ($success) {return['success' => true, 'message' => 'You have been registered'];
+	} else { return['success' => false, 'message'=> 'registration faiued'];}
+}
 
 
 
