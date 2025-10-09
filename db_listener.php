@@ -1,4 +1,4 @@
-\#!/usr/bin/php
+#!/usr/bin/php
 <?php
 require_once('path.inc');
 require_once('get_host_info.inc');
@@ -22,6 +22,11 @@ function doLoginDB($username, $password) {
 	 if($found) {return ['success' => true, 'message' => 'Login successful'];
 	} else{return['success'=> false, 'message' => 'Invalid username and/or password']; }
 }
+
+function doRegisterDB($username, $password){
+$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed'];}
+$stmt = $mysqli->prepare("SELECT * FROM users WHERE username=? AND password=?");
 
 
 
