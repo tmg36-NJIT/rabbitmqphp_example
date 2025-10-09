@@ -158,7 +158,7 @@ class rabbitMQClient
 			$exchange = new AMQPExchange($channel);
 			$exchange->setName($this->exchange);
 			$exchange->setType($this->exchange_type);
-			$exchange->setFlags(AMQP_DURABLE); //Setting exchange to durable
+			$exchange->setFlags(AMQP_DURABLE); //Setting exchange to durable, messages stay after server restarts
 
 			$callback_queue = new AMQPQueue($channel);
 			$callback_queue->setName($this->queue . "_response");
@@ -188,26 +188,31 @@ class rabbitMQClient
 		$json_message = json_encode($message);
 		try
 		{
-      $params = array();
-      $params['host'] = $this->BROKER_HOST;
-      $params['port'] = $this->BROKER_PORT;
-      $params['login'] = $this->USER;
-      $params['password'] = $this->PASSWORD;
-      $params['vhost'] = $this->VHOST;
+			$params = array();
+			$params['host'] = $this->BROKER_HOST;
+			$params['port'] = $this->BROKER_PORT;
+			$params['login'] = $this->USER;
+			$params['password'] = $this->PASSWORD;
+			$params['vhost'] = $this->VHOST;
+			
 			$conn = new AMQPConnection($params);
 			$conn->connect();
+			
 			$channel = new AMQPChannel($conn);
 			$exchange = new AMQPExchange($channel);
-      $exchange->setName($this->exchange);
-      $exchange->setType($this->exchange_type);
+			$exchange->setName($this->exchange);
+			$exchange->setType($this->exchange_type);
+			$exchange->setFlags(AMQP_DURABLE); //Setting exchange to durable
+
 			$this->conn_queue = new AMQPQueue($channel);
 			$this->conn_queue->setName($this->queue);
-			$this->conn_queue->bind($exchange->getName(),$this->routing_key);
-			return $exchange->publish($json_message,$this->routing_key);
+			$this->conn_queue->bind($exchange->getName(), $this->routing_key);
+			
+			return $exchange->publish($json_message, $this->routing_key);
 		}
 		catch(Exception $e)
 		{
-			die("failed to send message to exchange: ". $e->getMessage()."\n");
+			die("failed to send message to exchange: " . $e->getMessage() . "\n");
 		}
 	}
 }
