@@ -29,7 +29,7 @@ $mq = new rabbitMQClient('/var/www/html/testRabbitMQ.ini', 'testServer'); //mq f
 
 $req=[
 'type'=>'register',
-'username'=>user.
+'username'=>$user,
 'password' ->$pass
 ];
 ?>
