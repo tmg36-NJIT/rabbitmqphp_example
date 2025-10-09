@@ -9,6 +9,15 @@ require_once('/var/www/html/rabbitMQLib.inc');
 
 $mq=new rabbitMQClient("testRabbitMQ.ini","testServer");
 echo "Attempting to connect to Queue....<br>";
-
+if (!isset($_POST['username']) || !isset($_POST['password'])) {
+echo "Theres Some Missing fields.";
+exit;
+}
+$user = trim($_POST['username']);
+$pass = trim($_POST['password']);
+if ($user === '' || $pass === '') {
+echo "Looks like we need both username and password.";
+exit;
+}
 
 ?>
