@@ -59,6 +59,15 @@ error_log('register.php-> ' . $e->getMessage());
 <body>
 <h2 style="text-align:center;">Create Account</h2>
 
+<?php if (!empty($errs)): ?>
+<div style="color:red;">
+<?php foreach ($errs as $err): ?>
+<p><?php echo $err; ?></p>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+
+
 <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
 <label for="username">Enter Username:</label>
 <input type="text" id="username" name="username" required><br><br>
