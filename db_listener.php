@@ -32,6 +32,9 @@ function doRegisterDB($username, $password){
 	return ['success' => flase, 'message' => 'query prep failed']; }
 
 
+$stmt->bind_param("ss", $username, $password);
+$success = $stmt ->execute();
+
 
 
 
