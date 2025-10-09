@@ -58,6 +58,20 @@ error_log('register.php-> ' . $e->getMessage());
 <head><title>Sign Up</title></head>
 <body>
 <h2 style="text-align:center;">Create Account</h2>
+<title> Register </title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #eee;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+</style>
+
 
 <?php if (!empty($errs)): ?>
 <div style="color:red;">
