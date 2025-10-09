@@ -13,14 +13,13 @@ else
 {
   $msg = "test message";
 }
-
+//request created as an array and is sent to broker -> DB
 $request = array();
 $request['type'] = "Login";
 $request['username'] = "steve";
 $request['password'] = "password";
 $request['message'] = $msg;
-$response = $client->send_request($request);
-//$response = $client->publish($request);
+$response = $client->send_request($request); //Requests is sent to RabbitMQ Server, then to Database and waits for response
 
 echo "client received response: ".PHP_EOL;
 print_r($response);
