@@ -15,7 +15,12 @@ $user=trim($_POST['username'] ?? '');
 $pass=trim($_POST['password'] ?? '');
 
 
-}
+if ($user==='')
+$errs] = 'There needs to be a username. Try again!';
 
+}
+if ($pass==''){
+$errs[]="There needs to be a password. Try again!"
+}
 ?>
 
