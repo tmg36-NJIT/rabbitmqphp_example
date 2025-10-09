@@ -2,7 +2,7 @@
 <?php
 ini_set('display_errors',1);
 error_reporting(E_ALL);
-session_start()
+session_start();
 require_once('/var/www/html/path.inc');
 require_once('/var/www/html/get_host_info.inc');
 require_once('/var/www/html/rabbitMQLib.inc');
@@ -15,10 +15,6 @@ exit;
 }
 $user = trim($_POST['username']);
 $pass = trim($_POST['password']);
-if ($user === '' || $pass === '') {
-echo "Looks like we need both username and password.";
-exit;
-}
 if($user==='' || $pass==='') {
 echo "Dont leave field empty. Both username & password are required.";
 exit; }
@@ -37,7 +33,7 @@ echo htmlspecialchars($res['message']);
 echo htmlspecialchars($res['message'] ?? 'Unfortunately, Could not register.');
 }
 } catch (Exception $e) {
-echo "Sorry! Looks like we had an eror wile sending request: ".$e->getMessage();
+echo "Sorry! Looks like we had an error wile sending request: ".$e->getMessage();
 exit;
 }
 ?>
