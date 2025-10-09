@@ -19,5 +19,10 @@ if ($user === '' || $pass === '') {
 echo "Looks like we need both username and password.";
 exit;
 }
+if($user==='' || $pass==='') {
+echo "Dont leave field empty. Both username & password are required.";
+exit; }
+
+
 
 ?>
