@@ -6,9 +6,9 @@ require_once('rabbitMQLib.inc');
 
 
 function doLoginDB($username, $password) {
-	$mysqli - new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed']; }
-	$stmt = $mysqli->prepare("SELECT * FROM users WQHERE username=? AND password=?");
+	$stmt = $mysqli->prepare("SELECT * FROM users WHERE username=? AND password=?");
 	if(!$stmt) {
 	$mysqli->close();
 	return ['success' => false, 'message' => 'query prep failed']; }
@@ -45,7 +45,7 @@ function doRegisterDB($username, $password){
 function requestProcessor($request) {
 	echo "Received request:";
 	 var_dump($request);
-        if(!isset($request['type'])){ return['success' => flase, 'message' => 'Invalid request'];}
+        if(!isset($request['type'])){ return['success' => false, 'message' => 'Invalid request'];}
 
 
 	switch($request['type']){
