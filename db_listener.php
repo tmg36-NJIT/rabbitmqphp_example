@@ -16,7 +16,7 @@ function doLoginDB($username, $password) {
 	$stmt->bind_param("ss", $username, $password);
 	$stmt ->execute();
 	$result = $stmt->get_result();
-	$found=$stmt->($result && $result->num_rows > 0
+	$found=$stmt->($result && $result->num_rows > 0);
 	$stmt->close();
 	$mysqli->close();
 	 if($found) {return ['success' => true, 'message' => 'Login successful'];
@@ -52,9 +52,9 @@ function requestProcessor($request) {
 		case 'login':
 		 return doLoginDB($request['username'], $request['password']);
 		case 'register':
-		 return doReisterDB($request['username'], $request['password']);
+		 return doRegisterDB($request['username'], $request['password']);
 		default:
-		 return['success' => false, 'message' => 'invalid request'];
+		 return['success' => false, 'message' => 'invalid request'];}
 }
 
 
