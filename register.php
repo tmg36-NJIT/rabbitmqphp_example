@@ -32,5 +32,8 @@ $req=[
 'username'=>$user,
 'password' ->$pass
 ];
+
+$res=$mq->send_request($req); //not sure yet but might switch to publish function if apache hangs during testing
+
 ?>
 
