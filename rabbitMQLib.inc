@@ -34,6 +34,7 @@ class rabbitMQServer
 		}
 		$this->exchange = $this->machine[$server]["EXCHANGE"];
 		$this->queue = $this->machine[$server]["QUEUE"];
+		$this->routing_key = $this->queue; //Matches routing key to queue to ensure consistency in message routing
 	}
 
 	function process_message($msg)
