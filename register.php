@@ -7,6 +7,10 @@ require_once('/var/www/html/path.inc');
 require_once('/var/www/html/get_host_info.inc');
 require_once('/var/www/html/rabbitMQLib.inc');
 
+$errs = [];
+$okMsg = '';
+
+
 
 ?>
 
