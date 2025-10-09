@@ -13,10 +13,17 @@ function doLoginDB($username, $password) {
         $ mysqli->close();
         return ['success' => flase, 'message' => 'query prep failed']; }
 
+	$stmt->bind_param("ss", $username, $password);
+        $success = $stmt ->execute();
 
+function requestProcessor($request) {
+	echo "Received request:";
+	 var_dump($request);
+	return ['success' => true, 'message' => 'Received request'];
+}
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
-$server->process_requests('requestHandler');
+$server->process_requests('requestProcessor');
 echo "Database Listener started\n";
 
 ?>
