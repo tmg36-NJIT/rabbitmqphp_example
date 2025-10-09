@@ -69,6 +69,19 @@ class rabbitMQServer
 
 			echo " [*] Listening for messages in queue: {$this->queue}\n"; //Status message to demonstrate queue is listening 
 
+			//Replaced old consume() function with continuous polling loop
+			while (true) {
+				$envelope = $this->conn_queue->get(AMQP_AUTOACK); //Auto-acknowledges receipt
+				if ($envelope) {
+					$body = $envelope->getBody();
+					$payload = json_decode($body, true); //Decodes message into array once received
+
+					//Checks if message is handled by a callback function
+					if (isset($this->callback)) {
+						$response = call_user_func($this->callback, $payload);
+						//Gets queue name to know where to send response back
+						$replyTo = $envelope->getReplyTo();
+						$correlationID = $envelope->getCorrelationId();
 		}
 		catch (Exception $e)
 		{
