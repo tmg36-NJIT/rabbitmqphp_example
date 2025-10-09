@@ -38,7 +38,7 @@ $res=$mq->send_request($req); //not sure yet but might switch to publish functio
 if (isset($res['success']) && $res['success'] === true) {
 $okMsg=htmlspecialchars($res['message']); }
 else {
-$errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration has failed. Try again please!')
+$errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration has failed. Try again please!');
 }
 
 //some additional error logging
