@@ -67,6 +67,11 @@ error_log('register.php-> ' . $e->getMessage());
 </div>
 <?php endif; ?>
 
+<?php if ($okMsg): ?>
+<div style="color:green;">
+<?php echo $okMsg; ?>
+</div>
+<?php endif; ?>
 
 <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'], ENT_QUOTES, 'UTF-8'); ?>">
 <label for="username">Enter Username:</label>
