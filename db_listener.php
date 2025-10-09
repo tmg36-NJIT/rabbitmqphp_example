@@ -42,13 +42,15 @@ function doRegisterDB($username, $password){
 
 
 
-
-
 function requestProcessor($request) {
 	echo "Received request:";
 	 var_dump($request);
-	return ['success' => true, 'message' => 'Received request'];
+        if(!isset($request['type'])){ return['success' => flase, 'message' => 'Invalid request'];}
 }
+
+
+
+
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
 $server->process_requests('requestProcessor');
