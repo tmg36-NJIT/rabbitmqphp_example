@@ -43,7 +43,7 @@ $errs[]=htmlspecialchars($res['message'] ??  'Unfortunately, Your registration h
 
 //some additional error logging
 } catch(Exception $e) {
-$errs[]='Hello!! Try this again later. Something unexpected occurred."
+$errs[]='Hello! Something unexpected occurred. Please try again later.';
 error_log('register.php-> ' . $e->getMessage());
 ?>
 
