@@ -68,9 +68,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
-h2 { text-align: center;margin 0 0 13px; }
+.container {
+  background-color: #fff;
+  width: 340px;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
 </style>
 
 
