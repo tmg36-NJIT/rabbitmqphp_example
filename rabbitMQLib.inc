@@ -67,11 +67,8 @@ class rabbitMQServer
 			$this->conn_queue->declareQueue();
 			$this->conn_queue->bind($exchange->getName(), $this->routing_key); //Removed hardcoded bindings, replaced with dynamic routing key
 
-			// Loop as long as the channel has callbacks registered
-			while (count($channel->callbacks))
-			{
-				$channel->wait();
-			}
+			echo " [*] Listening for messages in queue: {$this->queue}\n"; //Status message to demonstrate queue is listening 
+
 		}
 		catch (Exception $e)
 		{
