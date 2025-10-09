@@ -26,5 +26,11 @@ $errs[]="There needs to be a password. Try again!"
 if(empty($errs)) {
 try{
 $mq = new rabbitMQClient('/var/www/html/testRabbitMQ.ini', 'testServer'); //mq for the client
+
+$req=[
+'type'=>'register',
+'username'=>user.
+'password' ->$pass
+];
 ?>
 
