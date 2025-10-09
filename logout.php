@@ -6,6 +6,6 @@ ini_set('display_startup_errors',1);
 session_start();
 $_Session=[];
 session_destroy();
-header('Location:login.php')
-
+header('Location:login.php');
+exit();
 
