@@ -62,7 +62,7 @@ function doRegisterDB($username, $password){
 	$mysqli->close();
 	return ['success' => true, 'message' => "User Registered!"];}
 	catch(mysqli_sql_exception $e) {
-	 if (str_contains($e->getMessage(), 'duplicate entry')) { return ['success' => false, 'message' => "Username already exists"];}
+	 if (str_contains($e->getMessage(), 'Duplicate entry')) { return ['success' => false, 'message' => "Username already exists"];}
 	return ['success' => false, 'message' => "Registration error: " . $e->getMessage()]; }
 
 
@@ -90,7 +90,7 @@ function requestProcessor($request) {
 
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
-echo "connected to broker: ". $server->BROKER_HOST;. "\n"
+echo "connected to broker: ". $server->BROKER_HOST. "\n";
 echo "database listener started\n";
 
 $server->process_requests(function($request) {
