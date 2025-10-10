@@ -22,5 +22,10 @@ $conn->close();
 exit;
 }
 
+$count-$data->fetchassoc(){'total']??0;
+$entry="[$time] Users in table: $count\n";
+file_put_contents($logFile,$entry,FILE_APPEND);
+echo $entry;
+$conn->close()
 
 ?>
