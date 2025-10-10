@@ -33,17 +33,17 @@ function doLoginDB($username, $password) {
 	$stmt->bind_param("ss", $username, $password);
 	$stmt ->execute();
 	$result = $stmt->get_result();
-	$row - $result->fetch_assoc();
+	$row = $result->fetch_assoc();
 	$stmt->close();
 	$mysqli->close();
-	 if($row) { $sessionKey = creaseSession($row['id']);
+	 if($row) { $sessionKey = createSession($row['id']);
 		if($sessionKey) {
 			return [
 				'success' =>true,
 				'message' =>"Login successful", 
 				'session_key' =>$sessionKey ];
 		} else {return ['success' => true, 'message' => "Login successful (no key)"];}
-	}
+	} else { return ['success' => false, 'message' => "Invalid username and/or password"];}
 }
 
 function doRegisterDB($username, $password){
@@ -62,7 +62,7 @@ function doRegisterDB($username, $password){
 	$mysqli->close();
 	return ['success' => true, 'message' => "User Registered!"];}
 	catch(mysqli_sql_exception $e) {
-	 if (str_contains)$e->getMessage(), 'duplicate entry')) { return ['success' => false, 'message' => "Username already exists"];}
+	 if (str_contains($e->getMessage(), 'duplicate entry')) { return ['success' => false, 'message' => "Username already exists"];}
 	return ['success' => false, 'message' => "Registration error: " . $e->getMessage()]; }
 
 
@@ -90,10 +90,11 @@ function requestProcessor($request) {
 
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
-echo "connected to broker: " $server->BROKER_HOST;
+echo "connected to broker: ". $server->BROKER_HOST;. "\n"
 echo "database listener started\n";
 
-$server->process_requests(function($request) { $response = requestProcessor($request)
+$server->process_requests(function($request) {
+	 $response = requestProcessor($request);
 	echo "Response: \n";
 	var_dump($response);
 	return $response; } );
