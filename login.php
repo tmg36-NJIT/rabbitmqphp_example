@@ -50,6 +50,12 @@ $error_message = "Oh no! There's an error connecting to authentication service."
 </div>
 <?php endif; ?>
 
+<?php if($error_message): ?>
+<div style="color:red;">
+<p><?php echo $error_message; ?></p>
+</div>
+<?php endif; ?>
+
 <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'],ENT_QUOTES,'UTF-8'); ?>">
 <label>Username:</label>
 <input type="text" name="username" required><br><br>
