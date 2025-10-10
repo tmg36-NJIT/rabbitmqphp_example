@@ -91,6 +91,8 @@ class rabbitMQServer
 						}
 					}
 					echo " Message has been processed\n"; //Status update
+				} else {
+					usleep(100000); //Avoids CPU spike
 				} 
 			}
 			$conn->disconnect(); //Closes connection when loop is ended
