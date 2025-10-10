@@ -5,18 +5,18 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 function createSession($user_id) {
-	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb")
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return false;}
 
 	$sessionKey =bin2hex(random_bytes(16));
-	$stmt = $my->prepare("INSERT INTO sessions (user_id, session_key, expires_at) VALUES(?, ?, DATE_ADDED(NOW(), INTERVAL1 HOUR)");
+	$stmt = $mysqli->prepare("INSERT INTO sessions (user_id, session_key, expires_at) VALUES(?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))");
 	if(!$stmt) {
 	$mysqli->close();
-	return flase;}
+	return false;}
 
-	$stmt->bind param("is", $user_id, $sessionKey);
+	$stmt->bind_param("is", $user_id, $sessionKey);
 	$success = $stmt->execute();
-	$STMT->close();
+	$stmt->close();
 	$mysqli->close();
 	if($success){return $sessionKey;
 	} else {return false;}
