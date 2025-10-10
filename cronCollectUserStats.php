@@ -16,4 +16,11 @@ exit;
 $query="SELECT COUNT(*) AS total FROM users";
 $data=$conn->query($query);
 
+if(!$data){
+file_put_contents($logFile,"[$time] Query failed: ".$conn->error."\n",FILE_APPEND);
+$conn->close();
+exit;
+}
+
+
 ?>
