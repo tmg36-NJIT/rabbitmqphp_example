@@ -10,6 +10,7 @@ require_once('/var/www/html/rabbitMQLib.inc');
 
 $errs = [];
 $okMsg = '';
+$error_message='';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $user = trim($_POST['username'] ?? '');
@@ -21,6 +22,15 @@ try {
 $mq = new rabbitMQClient('/var/www/html/testRabbitMQ.ini','testServer');
 $req = ['type'=>'login','username'=>$user,'password'=>$pass];
 $res = $mq->send_request($req);
+
+if ($res && isset($res['success']) && $res['success'] === true) {
+$_SESSION['username'] = $user;
+$_SESSION['session_key'] = $res['session_key'] ?? null;
+header("Location: home.php");
+exit;
+} else {
+$error_message = $res['message'] ?? "Invalid credentials.";
+}
 
 
 ?>
