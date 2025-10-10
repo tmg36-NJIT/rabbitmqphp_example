@@ -6,7 +6,8 @@ require_once('rabbitMQLib.inc');
 
 function createSession($user_id) {
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
-	if($mysqli->connect_errno){return false;}
+	if($mysqli->connect_errno){
+	return false;}
 
 	$sessionKey =bin2hex(random_bytes(16));
 	$stmt = $mysqli->prepare("INSERT INTO sessions (user_id, session_key, expires_at) VALUES(?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))");
@@ -15,11 +16,10 @@ function createSession($user_id) {
 	return false;}
 
 	$stmt->bind_param("is", $user_id, $sessionKey);
-	$success = $stmt->execute();
+	$stmt->execute();
 	$stmt->close();
 	$mysqli->close();
-	if($success){return $sessionKey;
-	} else {return false;}
+	return $sessionKey;
 }
 
 function doLoginDB($username, $password) {
@@ -33,11 +33,17 @@ function doLoginDB($username, $password) {
 	$stmt->bind_param("ss", $username, $password);
 	$stmt ->execute();
 	$result = $stmt->get_result();
-	$found=($result && $result->num_rows > 0);
+	$row - $result->fetch_assoc();
 	$stmt->close();
 	$mysqli->close();
-	 if($found) {return ['success' => true, 'message' => 'Login successful'];
-	} else{return['success'=> false, 'message' => 'Invalid username and/or password']; }
+	 if($row) { $sessionKey = creaseSession($row['id']);
+		if($sessionKey) {
+			return [
+				'success' =>true,
+				'message' =>"Login successful", 
+				'session_key' =>$sessionKey ];
+		} else {return ['success' => true, 'message' => "Login successful (no key)"];}
+	}
 }
 
 function doRegisterDB($username, $password){
@@ -82,8 +88,8 @@ $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
 echo "connected to broker: " $server->BROKER_HOST;
 
 $server->process_requests(function($request) { $response = requestProcessor($request)
-	echo "Response: \n"
-	vardump($response);
+	echo "Response: \n";
+	var_dump($response);
 	return $response; } );
 echo "Database Listener started\n";
 
