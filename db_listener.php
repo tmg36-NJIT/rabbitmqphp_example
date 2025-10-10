@@ -49,6 +49,7 @@ function doLoginDB($username, $password) {
 function doRegisterDB($username, $password){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed'];}
+	try {
 	$stmt = $mysqli->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
 	if(!$stmt) {
 	$mysqli->close();
@@ -56,11 +57,15 @@ function doRegisterDB($username, $password){
 
 
 	$stmt->bind_param("ss", $username, $password);
-	$success = $stmt ->execute();
+	$stmt->execute();
 	$stmt->close();
 	$mysqli->close();
-	if ($success) {return['success' => true, 'message' => 'You have been registered'];
-	} else { return['success' => false, 'message'=> 'registration failed'];}
+	return ['success' => true, 'message' => "User Registered!"];}
+	catch(mysqli_sql_exception $e) {
+	 if (str_contains)$e->getMessage(), 'duplicate entry')) { return ['success' => false, 'message' => "Username already exists"];}
+	return ['success' => false, 'message' => "Registration error: " . $e->getMessage()]; }
+
+
 }
 
 
@@ -86,11 +91,12 @@ function requestProcessor($request) {
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
 echo "connected to broker: " $server->BROKER_HOST;
+echo "database listener started\n";
 
 $server->process_requests(function($request) { $response = requestProcessor($request)
 	echo "Response: \n";
 	var_dump($response);
 	return $response; } );
-echo "Database Listener started\n";
+
 
 ?>
