@@ -79,7 +79,12 @@ function requestProcessor($request) {
 
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
-$server->process_requests('requestProcessor');
+echo "connected to broker: " $server->BROKER_HOST;
+
+$server->process_requests(function($request) { $response = requestProcessor($request)
+	echo "Response: \n"
+	vardump($response);
+	return $response; } );
 echo "Database Listener started\n";
 
 ?>
