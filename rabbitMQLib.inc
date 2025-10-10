@@ -82,6 +82,18 @@ class rabbitMQServer
 						//Gets queue name to know where to send response back
 						$replyTo = $envelope->getReplyTo();
 						$correlationID = $envelope->getCorrelationId();
+						
+						//If a reply queue is specified, it sends a response back to the requester
+						if(!empty($replyTo)) {
+							$reply_exchange = new AMQPExchange($channel);
+							$reply_exchange->setName('');
+							$reply_exchange->publish(json_encode($response), $replyTo, AMQP_NOPARAM, ['correlation_id' => $correlationID]); //Uses ID to match response with request
+						}
+					}
+					echo " Message has been processed\n"; //Status update
+				} 
+			}
+			$conn->disconnect(); //Closes connection when loop is ended
 		}
 		catch (Exception $e)
 		{
@@ -92,6 +104,7 @@ class rabbitMQServer
 
 class rabbitMQClient
 {
+
 	private $machine = "";
 	public  $BROKER_HOST;
 	private $BROKER_PORT;
