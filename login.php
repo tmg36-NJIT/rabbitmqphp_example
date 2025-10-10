@@ -31,7 +31,9 @@ exit;
 } else {
 $error_message = $res['message'] ?? "Invalid credentials.";
 }
-
+} catch (Exception $e) {
+$error_message = "Oh no! There's an error connecting to authentication service.";
+}
 
 ?>
 <!DOCTYPE html>
