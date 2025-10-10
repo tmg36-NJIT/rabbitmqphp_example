@@ -13,4 +13,7 @@ exit;
 
 }
 
+$query="SELECT COUNT(*) AS total FROM users";
+$data=$conn->query($query);
+
 ?>
