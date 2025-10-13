@@ -71,7 +71,7 @@ class rabbitMQServer
 
 			//Replaced old consume() function with continuous polling loop
 			while (true) {
-				$envelope = $this->conn_queue->get(AMQP_AUTOACK); //Auto-acknowledges receipt
+				$envelope = $this->conn_queue->get(); //manual ack
 				if ($envelope) {
 					$body = $envelope->getBody();
 					$payload = json_decode($body, true); //Decodes message into array once received
@@ -90,6 +90,7 @@ class rabbitMQServer
 							$reply_exchange->publish(json_encode($response), $replyTo, AMQP_NOPARAM, ['correlation_id' => $correlationID]); //Uses ID to match response with request
 						}
 					}
+					$this->conn_queue->ack($envelope->getDeliveryTag()); //Acks messages after processing
 					echo " Message has been processed\n"; //Status update
 				} else {
 					usleep(100000); //Avoids CPU spike
