@@ -37,8 +37,6 @@ class rabbitMQServer
 		$this->routing_key = $this->queue; //Matches routing key to queue to ensure consistency in message routing
 	}
 
-	//removed process_message function and replaced with polling loop in process_requests	
-
 	function process_requests($callback)
 	{
 		try
@@ -69,14 +67,13 @@ class rabbitMQServer
 
 			echo " [*] Listening for messages in queue: {$this->queue}\n"; //Status message to demonstrate queue is listening 
 
-			//Replaced old consume() function with continuous polling loop
-			while (true) {
-				$envelope = $this->conn_queue->get(); //manual ack
-				if ($envelope) {
+			//Removed polling loop(caused dead queue issue), replaced with consume() - waits for messages instead of polling
+				$this->conn_queue->consume(function($envelope, $queue) use ($channel, $callback) {
 					$body = $envelope->getBody();
 					$payload = json_decode($body, true); //Decodes message into array once received
 
 					//Checks if message is handled by a callback function
+				try {
 					if (isset($this->callback)) {
 						$response = call_user_func($this->callback, $payload);
 						//Gets queue name to know where to send response back
@@ -90,17 +87,18 @@ class rabbitMQServer
 							$reply_exchange->publish(json_encode($response), $replyTo, AMQP_NOPARAM, ['correlation_id' => $correlationID]); //Uses ID to match response with request
 						}
 					}
-					$this->conn_queue->ack($envelope->getDeliveryTag()); //Acks messages after processing
+
+					$queue->ack($envelope->getDeliveryTag()); //Acks messages after processing
 					echo " Message has been processed\n"; //Status update
-				} else {
-					usleep(100000); //Avoids CPU spike
-				} 
-			}
-			$conn->disconnect(); //Closes connection when loop is ended
-		}
-		catch (Exception $e)
-		{
-			trigger_error("Failed to start request processor: " . $e, E_USER_ERROR); 
+				} catch (Exception $e) {
+					echo "Error processing message: " . $e->getMessage() . "\n";
+					$queue->nack($envelope->getDeliveryTag(), AMQP_REQUEUE); //Reques messages for processing
+				}
+			});
+			$conn->disconnect(); //Closes out connection
+
+		} catch (Exception $e) {
+			trigger_error("Failed to start request processor: " . $e, E_USER_ERROR);
 		}
 	}
 }
