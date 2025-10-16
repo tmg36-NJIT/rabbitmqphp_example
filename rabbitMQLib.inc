@@ -56,12 +56,12 @@ class rabbitMQServer
 			$exchange = new AMQPExchange($channel);
 			$exchange->setName($this->exchange);
 			$exchange->setType($this->exchange_type);
-			$exchange->setFlags(AMQP_DURABLE); //Set exchange to durable
+			$exchange->setFlags(AMQP_DURABLE); //Set exchange to durable - Keeps exchange after restart
 			$exchange->declareExchange();
 
 			$this->conn_queue = new AMQPQueue($channel);
 			$this->conn_queue->setName($this->queue);
-			$this->conn_queue->setFlags(AMQP_DURABLE); //Set queue to durable
+			$this->conn_queue->setFlags(AMQP_DURABLE); //Set queue to durable - Keeps queue after restart
 			$this->conn_queue->declareQueue();
 			$this->conn_queue->bind($exchange->getName(), $this->routing_key); //Removed hardcoded bindings, replaced with dynamic routing key
 
@@ -77,6 +77,8 @@ class rabbitMQServer
 					if (isset($this->callback)) {
 						$response = call_user_func($this->callback, $payload);
 						//Gets queue name to know where to send response back
+
+						//Sends response if a reply is expected
 						$replyTo = $envelope->getReplyTo();
 						$correlationID = $envelope->getCorrelationId();
 						
@@ -89,15 +91,17 @@ class rabbitMQServer
 					}
 
 					$queue->ack($envelope->getDeliveryTag()); //Acks messages after processing
-					echo " Message has been processed\n"; //Status update
+					echo "Message has been processed\n"; //Status update
 				} catch (Exception $e) {
+					//Handles and reques failed messages
 					echo "Error processing message: " . $e->getMessage() . "\n";
-					$queue->nack($envelope->getDeliveryTag(), AMQP_REQUEUE); //Reques messages for processing
+					$queue->nack($envelope->getDeliveryTag(), AMQP_REQUEUE)
 				}
 			});
 			$conn->disconnect(); //Closes out connection
 
 		} catch (Exception $e) {
+			//Handles connection/setup issues
 			trigger_error("Failed to start request processor: " . $e, E_USER_ERROR);
 		}
 	}
