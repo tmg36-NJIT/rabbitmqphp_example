@@ -72,7 +72,7 @@ function doRegisterDB($username, $password){
 function getGameRecommendations($query = null) {
 	$apiKey='e92e94964e714d64aa425f8c11d0996e';
 	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
-	if($query){$baseUrl.= '&search'. urlencode($query);}
+	if ($query){ $baseUrl .= '&search=' . urlencode($query);}
 	
 	$response= @file_get_contents($baseUrl);
 	if($response==false){return ['success'  => false, 'message' => 'unable to reach the rawg api'];}
@@ -91,6 +91,9 @@ function requestProcessor($request) {
 		 return doLoginDB($request['username'], $request['password']);
 		case 'register':
 		 return doRegisterDB($request['username'], $request['password']);
+		case 'get_recommendations':
+		 $query= $request['query'] ??null;
+		 return getGameRecommendations($query);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
