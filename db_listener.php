@@ -74,6 +74,8 @@ function getGameRecommendations($query = null) {
 	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
 	if($query){$baseUrl.= '&search'. urlencode($query);}
 	
+	$response= @filegetcontents($baseUrl);
+	if($response==false){return ['success'  => false 'message' => 'unable to rach the rawg api'];}
 	
 
 
