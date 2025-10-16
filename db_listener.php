@@ -75,10 +75,10 @@ function getGameRecommendations($query = null) {
 	if($query){$baseUrl.= '&search'. urlencode($query);}
 	
 	$response= @file_get_contents($baseUrl);
-	if($response==false){return ['success'  => false, 'message' => 'unable to rach the rawg api'];}
+	if($response==false){return ['success'  => false, 'message' => 'unable to reach the rawg api'];}
 	$data= json_decode($response, true);
 	return ['success' => true, 'results' => $data['results'] ?? []];
-
+}
 
 function requestProcessor($request) {
 	echo "Received request:";
