@@ -69,6 +69,10 @@ function doRegisterDB($username, $password){
 }
 
 
+function getGameRecommendations($query = null) {
+	$apiKey='e92e94964e714d64aa425f8c11d0996e';
+	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
+
 
 function requestProcessor($request) {
 	echo "Received request:";
