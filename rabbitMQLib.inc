@@ -95,7 +95,7 @@ class rabbitMQServer
 				} catch (Exception $e) {
 					//Handles and reques failed messages
 					echo "Error processing message: " . $e->getMessage() . "\n";
-					$queue->nack($envelope->getDeliveryTag(), AMQP_REQUEUE)
+					$queue->nack($envelope->getDeliveryTag(), AMQP_REQUEUE);
 				}
 			});
 			$conn->disconnect(); //Closes out connection
