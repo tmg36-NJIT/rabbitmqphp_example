@@ -81,10 +81,10 @@ function getGameRecommendations($query = null) {
 }
 
 function saveUserSearch($username, $query){
-	 $mysqli = new mysqli("host", "authsuer", "StrongPassword123!", "testdb");
+	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return false; };
 
-	$stmt = $mysqli->prepare("INSERT INTO user_searches (username, search_query, searched_at) VALUES (?, ?, NOW()");
+	$stmt = $mysqli->prepare("INSERT INTO user_searches (username, search_query, searched_at) VALUES (?, ?, NOW())");
 		if(!$stmt){$mysqli->close();
 		return false;}
 
