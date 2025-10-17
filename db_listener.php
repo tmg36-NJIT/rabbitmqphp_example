@@ -111,6 +111,9 @@ function requestProcessor($request) {
 		case 'get_recommendations':
 		 $query= $request['query'] ??null;
 		 return getGameRecommendations($query);
+		case 'submit_review':
+		 $username= $request['username']??'Guest';
+		 $reviewText=$request['review']?? ($request['comment'] ??);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
