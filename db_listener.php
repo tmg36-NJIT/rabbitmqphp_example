@@ -119,7 +119,14 @@ function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "
 	if(!stmt){$mysqli->close();
 		return['success'=> false,'message' => 'Query prep failed'];}
 
-	
+	$stmt->bind_param("s", $game_name)
+	$stmt->execute();
+	$result=$stmt->get_results();
+	$reviews=[];
+	 while($row =$result->fetech_assoc()){$reviews[] = $row;}
+	$stmt->close();
+	$mysqli->close();
+	return['success', => true, 'results' => $reviews]; }
 
 
 
@@ -145,6 +152,8 @@ function requestProcessor($request) {
 		 $username= $request['username']??'Guest';
 		 $reviewText=$request['review']?? ($request['comment'] ?? '');
 		return submitReview($username,$request['game_name'], $request['rating'], $reviewText);
+		case 'get_reviews':
+		return getReviews($request['game_name'];);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
