@@ -113,6 +113,14 @@ function submitReview($username, $game_name, $rating, $review){
 }
 
 
+function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	if ($mysqli->connect_errno) {return['success' => false, 'message' => 'connection failed']}
+	 $stmt = $mysqli->prepare("SELECT username, rating, review, created_at from reviews WHERE game_name = ? ORDER BY created_at DESC");
+	if(!stmt){$mysqli->close();
+		return['success'=> false,'message' => 'Query prep failed'];}
+
+	
+
 
 
 
@@ -130,6 +138,8 @@ function requestProcessor($request) {
 		 return doRegisterDB($request['username'], $request['password']);
 		case 'get_recommendations':
 		 $query= $request['query'] ??null;
+		$username= $request['username']?? 'Guest';
+		if ($query){saveUserSearch($username, $query);
 		 return getGameRecommendations($query);
 		case 'submit_review':
 		 $username= $request['username']??'Guest';
