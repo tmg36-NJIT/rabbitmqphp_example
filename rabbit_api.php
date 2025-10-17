@@ -28,4 +28,19 @@ exit;}
 
 require_once $lib;
 
-
+if(isset($_GET['genre'])){
+$genre = trim($_GET['genre']);
+}else{
+$genre = '';
+}
+if(isset($_GET['platform'])){
+$platform = trim($_GET['platform']);
+}
+else{
+$platfrm = '';
+}
+  if(isset($_GET['year'])){
+$year = trim($_GET['year']);
+}else{
+$year = '';
+}
