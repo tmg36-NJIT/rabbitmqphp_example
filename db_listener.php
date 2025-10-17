@@ -69,6 +69,33 @@ function doRegisterDB($username, $password){
 }
 
 
+function getGameRecommendations($query = null) {
+	$apiKey='e92e94964e714d64aa425f8c11d0996e';
+	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
+	if ($query){ $baseUrl .= '&search=' . urlencode($query);}
+	
+	$response= @file_get_contents($baseUrl);
+	if($response==false){return ['success'  => false, 'message' => 'unable to reach the rawg api'];}
+	$data= json_decode($response, true);
+	return ['success' => true, 'results' => $data['results'] ?? []];
+}
+
+
+function submitReview($username. $game_name, rating, $review){ 
+	$mysqli- new mysqli("localhost", "authusr", "Strongpassword123!", "testdb;");
+	if($mysqli->connect_errno){return['success' =>false 'message'=> 'database connection failed']}
+
+	$stmt= $mysqli->preprare("INSERT INTO reviews(username, game_name, rating, review) VALUES(?, ?, ?, ?)")
+	if(!$stsmt){ $mysqli->close();
+	 return['success'=> false, 'message' => 'Query prep failed'];}
+
+	$stmt->bind_param('ssis', $username, $game_name, $rating, $review);
+	$stmt->execute();
+	$stmt->close();
+	$mysqli->close();
+	return['success' =>true, 'message'=> 'Your review was submitted succesfully!'];
+
+
 
 function requestProcessor($request) {
 	echo "Received request:";
@@ -81,6 +108,12 @@ function requestProcessor($request) {
 		 return doLoginDB($request['username'], $request['password']);
 		case 'register':
 		 return doRegisterDB($request['username'], $request['password']);
+		case 'get_recommendations':
+		 $query= $request['query'] ??null;
+		 return getGameRecommendations($query);
+		case 'submit_review':
+		 $username= $request['username']??'Guest';
+		 $reviewText=$request['review']?? ($request['comment'] ??);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
