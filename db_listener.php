@@ -81,20 +81,20 @@ function getGameRecommendations($query = null) {
 }
 
 
-function submitReview($username. $game_name, rating, $review){ 
-	$mysqli- new mysqli("localhost", "authusr", "Strongpassword123!", "testdb;");
-	if($mysqli->connect_errno){return['success' =>false 'message'=> 'database connection failed']}
+function submitReview($username, $game_name, $rating, $review){ 
+	$mysqli = new mysqli("localhost", "authuser", "Strongpassword123!", "testdb");
+	if($mysqli->connect_errno){return['success' =>false, 'message'=> 'database connection failed']; }
 
-	$stmt= $mysqli->preprare("INSERT INTO reviews(username, game_name, rating, review) VALUES(?, ?, ?, ?)")
-	if(!$stsmt){ $mysqli->close();
+	$stmt= $mysqli->prepare("INSERT INTO reviews(username, game_name, rating, review) VALUES(?, ?, ?, ?)")
+	if(!$stmt){ $mysqli->close();
 	 return['success'=> false, 'message' => 'Query prep failed'];}
 
 	$stmt->bind_param('ssis', $username, $game_name, $rating, $review);
 	$stmt->execute();
 	$stmt->close();
 	$mysqli->close();
-	return['success' =>true, 'message'=> 'Your review was submitted succesfully!'];
-
+	return['success' =>true, 'message'=> 'Your review was submitted successfully!'];
+}
 
 
 function requestProcessor($request) {
