@@ -80,6 +80,15 @@ function getGameRecommendations($query = null) {
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
 
+function saveUserSearch($username, $query){
+	 $mysqli = new mysqli("host", "authsuer", "StrongPassword123!", "testdb");
+	if($mysqli->connect_errno){return false; };
+
+	$stmt = $mysqli->prepare("INSERT INTO user_searches (username, search_query, searched_at) VALUES (?, ?, NOW()");
+		if(!$stmt){$mysqli->close();
+		return false;}
+
+	
 
 function submitReview($username, $game_name, $rating, $review){ 
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
@@ -113,7 +122,8 @@ function requestProcessor($request) {
 		 return getGameRecommendations($query);
 		case 'submit_review':
 		 $username= $request['username']??'Guest';
-		 $reviewText=$request['review']?? ($request['comment'] ?? null);
+		 $reviewText=$request['review']?? ($request['comment'] ?? '');
+		return submitReview($username,$request['game_name'], $request['rating'], $reviewText);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
