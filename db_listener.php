@@ -88,7 +88,14 @@ function saveUserSearch($username, $query){
 		if(!$stmt){$mysqli->close();
 		return false;}
 
-	
+	 $stmt->bind_params("is", $username, $query);
+	$stmt->execute();
+	$stmt->close();
+	$mysqli->close();
+	return true;}
+
+
+
 
 function submitReview($username, $game_name, $rating, $review){ 
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
@@ -104,6 +111,10 @@ function submitReview($username, $game_name, $rating, $review){
 	$mysqli->close();
 	return['success' =>true, 'message'=> 'Your review was submitted successfully!'];
 }
+
+
+
+
 
 
 function requestProcessor($request) {
