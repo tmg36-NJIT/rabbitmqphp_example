@@ -82,10 +82,10 @@ function getGameRecommendations($query = null) {
 
 
 function submitReview($username, $game_name, $rating, $review){ 
-	$mysqli = new mysqli("localhost", "authuser", "Strongpassword123!", "testdb");
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return['success' =>false, 'message'=> 'database connection failed']; }
 
-	$stmt= $mysqli->prepare("INSERT INTO reviews(username, game_name, rating, review) VALUES(?, ?, ?, ?)")
+	$stmt= $mysqli->prepare("INSERT INTO reviews(username, game_name, rating, review) VALUES(?, ?, ?, ?)");
 	if(!$stmt){ $mysqli->close();
 	 return['success'=> false, 'message' => 'Query prep failed'];}
 
@@ -113,7 +113,7 @@ function requestProcessor($request) {
 		 return getGameRecommendations($query);
 		case 'submit_review':
 		 $username= $request['username']??'Guest';
-		 $reviewText=$request['review']?? ($request['comment'] ??);
+		 $reviewText=$request['review']?? ($request['comment'] ?? null);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
