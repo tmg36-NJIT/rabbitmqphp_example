@@ -146,14 +146,14 @@ function requestProcessor($request) {
 		case 'get_recommendations':
 		 $query= $request['query'] ??null;
 		$username= $request['username']?? 'Guest';
-		if ($query){saveUserSearch($username, $query);
+		if ($query){saveUserSearch($username, $query);}
 		 return getGameRecommendations($query);
 		case 'submit_review':
 		 $username= $request['username']??'Guest';
 		 $reviewText=$request['review']?? ($request['comment'] ?? '');
 		return submitReview($username,$request['game_name'], $request['rating'], $reviewText);
 		case 'get_reviews':
-		return getReviews($request['game_name'];);
+		return getReviews($request['game_name']);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
