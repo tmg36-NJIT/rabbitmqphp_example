@@ -13,3 +13,19 @@ $lib = __DIR__ . '/rabbitMQLib.inc';
 $ini = __DIR__ . '/testRabbitMQ.ini';
 $setion = 'testServer';
 
+if(!file_exists($lib)){
+http_response_code(500);
+ echo json_encode(['success'=>false,'message'=>'Missing rabbitMQLib.inc'
+]);
+exit;}
+
+if(!file_exists($ini))
+{
+http_response_code(500); echo json_encode([
+'success'=>false,'message'=>'Missing testRabbitMQ.ini'
+]);  
+exit;}
+
+require_once $lib;
+
+
