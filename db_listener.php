@@ -114,19 +114,19 @@ function submitReview($username, $game_name, $rating, $review){
 
 
 function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
-	if ($mysqli->connect_errno) {return['success' => false, 'message' => 'connection failed']}
+	if ($mysqli->connect_errno) {return['success' => false, 'message' => 'connection failed'];}
 	 $stmt = $mysqli->prepare("SELECT username, rating, review, created_at from reviews WHERE game_name = ? ORDER BY created_at DESC");
-	if(!stmt){$mysqli->close();
+	if(!$stmt){$mysqli->close();
 		return['success'=> false,'message' => 'Query prep failed'];}
 
-	$stmt->bind_param("s", $game_name)
+	$stmt->bind_param("s", $game_name);
 	$stmt->execute();
-	$result=$stmt->get_results();
+	$result=$stmt->get_result();
 	$reviews=[];
-	 while($row =$result->fetech_assoc()){$reviews[] = $row;}
+	 while($row =$result->fetch_assoc()){$reviews[] = $row;}
 	$stmt->close();
 	$mysqli->close();
-	return['success', => true, 'results' => $reviews]; }
+	return['success' => true, 'results' => $reviews]; }
 
 
 
