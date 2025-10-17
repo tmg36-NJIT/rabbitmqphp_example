@@ -1,4 +1,3 @@
-// this file will handle the logic for deliverables + API calls to be handled through the message broker (RabbitMQ).
 <?php
 declare(strict_types=1);
 error_reporting(E_ALLL);
@@ -44,3 +43,27 @@ $year = trim($_GET['year']);
 }else{
 $year = '';
 }
+//uiser  input sanitization
+$genre = preg_replace('/[^a-z0-9\- ]/i','',$genre);
+$platform = preg_replace('/[^0-9]/','',$platform);
+$year = preg_replace('/[^0-9]/','',$year);
+
+$query = trim("$genre $platform $year");
+$client = new rabbitMQClient($ini,$section);
+$input = file_get_contents('php://input');
+$json = json_decode($input,true);
+
+if(is_array($json) && isset($json['type'])){
+$request = $json;
+}
+elseif($genre || $platform || $year){
+$request = ['type'=>'get_recommendations','query'=>$query];
+}
+else{
+echo json_encode(['success'=>false,'message'=>'Empty or invalid request']);exit;
+}
+
+
+
+
+
