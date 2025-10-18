@@ -57,7 +57,18 @@ const noteEl=document.getElementById('note');
 const modal=document.getElementById('recModal');
 const closeBtn=document.getElementById('closeModal');
 
+//setup for some type of interactive array for reccomendation
+const questions=[
+{key:'genre',text:'What genre are you into?',optins:['Action','Adventure','RPG']},
+{key:'platform',text:'Which plaform do yu play on?',options:['PC','PS5','Xbox']},
+{key:'year',text:'From what year oward do you prefer games?',input:true}
+];
 
+function startInteractiveRec(){
+ modal.classList.add('show')
+ step=0;
+ showQuestion();
+}
 
-
+function showQuestion {
 ?>
