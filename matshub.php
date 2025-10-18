@@ -31,8 +31,17 @@ $email=$_SESSION['email'] ?? '';
 </header>
 <main></main>
 <div>
-<iinput id="gameSearch" type="text" placeholder="Search for a game">
+<input id="gameSearch" type="text-align:center" placeholder="Search for a game">
+  <div style="display:inline-flex;align-items:center;gap:8px;">
 <button id="btnSearch" type="button">Search</button>
   </div>
 </div>
+<div style="text-align:center;">
+<button id="startRecBtn" class="cool-btn"> Reccommend Me a Game!!" M/button>
+</div>
+
+
+
+
+
 ?>
