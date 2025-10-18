@@ -66,3 +66,12 @@ if(!isset($request['username'])) $request['username']=$user;
 error_log("rabbit_api: sending MQ request: ".json_encode($request))
  $response = $client->send_request($request);
 	if(empty($response)) throw new Exception('Empty response from listener');
+}catch(Throwable $e){
+errr_log('rabit_api MQ error: '.$e->getMessage());
+http_response_code(502);
+echo json_encode(['success'=>false,'message'=>'RabbitMQ error: '.$e->getMessage()]);
+exit
+   }
+
+
+
