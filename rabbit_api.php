@@ -62,8 +62,7 @@ $request = ['type'=>'get_recommendations','query'=>$query];
 else{
 echo json_encode(['success'=>false,'message'=>'Empty or invalid request']);exit;
 }
-
-
-
-
-
+if(!isset($request['username'])) $request['username']=$user;
+error_log("rabbit_api: sending MQ request: ".json_encode($request))
+ $response = $client->send_request($request);
+	if(empty($response)) throw new Exception('Empty response from listener');
