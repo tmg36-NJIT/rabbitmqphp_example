@@ -40,6 +40,22 @@ $email=$_SESSION['email'] ?? '';
 <button id="startRecBtn" class="cool-btn"> Reccommend Me a Game!!" M/button>
 </div>
 
+ <div id="recModal" class="modal">
+<div class="modal-content">
+ <button id="closeModal"></button>
+   <h2 id="modalTitle">Let's find your next game!</h2>
+ <p id="modalQuestion"></p>
+ <div id="modalOptions" class="modal-options"></div>
+<button id="nextStep" style="display:none;">Next</button>
+</div>
+</div>
+
+<footer>MATS: GameHub © | By RAWG API</footer>
+
+const resultsEl=document.getElementById('results');
+const noteEl=document.getElementById('note');
+const modal=document.getElementById('recModal');
+const closeBtn=document.getElementById('closeModal');
 
 
 
