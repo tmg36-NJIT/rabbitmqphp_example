@@ -20,5 +20,19 @@ $email=$_SESSION['email'] ?? '';
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="style.css">
 
+<header>
+<h1> <a href="matshub.php"> MATS: GameHub </a> </h1>
 
+<div class="user-tag">Welcome, <?= htmlspecialchars($username) ?>!</div>
+
+<form action="logout.php" method="post" style="display:inline;">
+<button type="submit" class="logout-btn">Logout</button>
+</form>
+</header>
+<main></main>
+<div>
+<iinput id="gameSearch" type="text" placeholder="Search for a game">
+<button id="btnSearch" type="button">Search</button>
+  </div>
+</div>
 ?>
