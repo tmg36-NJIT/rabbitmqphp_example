@@ -60,12 +60,12 @@ const closeBtn=document.getElementById('closeModal');
 //setup for some type of interactive array for reccomendation
 const questions=[
 {key:'genre',text:'What genre are you into?',optins:['Action','Adventure','RPG']},
-{key:'platform',text:'Which plaform do yu play on?',options:['PC','PS5','Xbox']},
+{key:'platform',text:'Which platform do yu play on?',options:['PC','PS5','Xbox']},
 {key:'year',text:'From what year onward do you prefer games?',input:true}
 ];
 
 function startInteractiveRec(){
- modal.classList.add('show')
+ modal.classList.add('show');
  step=0;
  showQuestion();
 }
@@ -81,6 +81,7 @@ function showQuestion(){
 modalOpt.appendChild(b);
  });
 }
+
 if(q.input){
  const select=document.createElement('select');
  for(let y=new Date().getFullYear();y>=1990;y--){
@@ -89,7 +90,38 @@ if(q.input){
  }
  modalOpt.appendChild(select);
 }
+function nextStep(){
+ step++;
+ if(step<questions.length)showQuestion();
+ else{modal.classList.remove('show');fetchRecommendations();}
+}
 
+async function fetchGames() {
+  const q = document.getElementById('gameSearch').value.trim();
+  if (!q) return;
+
+  try {
+ const res = await fetch(`rabbit_search.php?genre=${encodeURIComponent(q)}`);
+  const data = await res.json();
+   console.log('Fetched games:', data); // quick check
+  } catch (err) {
+
+ console.error('Error fetching games:', err);
+
+  }
+}
+async function fetchRecommendations() {
+  const params = new URLSearchParams(answers);
+  
+  try {
+ const res = await fetch(`rabbit_search.php?${params.toString()}`);
+   const data = await res.json();
+console.log('Recommendations:', data);
+   // should render the results here
+  } catch (err) {
+    console.error('Error fetching recommendations:', err);
+}
+}
 
 
 ?>
