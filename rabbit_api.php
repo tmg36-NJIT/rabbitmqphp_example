@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-error_reporting(E_ALLL);
-ini_set("display_errors, '1');
-header("Content type: application/json')
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+header('Content type: application/json')
 session_start();
 $user = isset($_SESSION['username']) && $_SESSION['username'] !== '' ? $_SESSION['username'] : 'Guest';
 
@@ -10,7 +10,7 @@ $user = isset($_SESSION['username']) && $_SESSION['username'] !== '' ? $_SESSION
 
 $lib = __DIR__ . '/rabbitMQLib.inc';
 $ini = __DIR__ . '/testRabbitMQ.ini';
-$setion = 'testServer';
+$section = 'testServer';
 
 if(!file_exists($lib)){
 http_response_code(500);
@@ -36,7 +36,7 @@ if(isset($_GET['platform'])){
 $platform = trim($_GET['platform']);
 }
 else{
-$platfrm = '';
+$platform = '';
 }
   if(isset($_GET['year'])){
 $year = trim($_GET['year']);
@@ -63,14 +63,15 @@ else{
 echo json_encode(['success'=>false,'message'=>'Empty or invalid request']);exit;
 }
 if(!isset($request['username'])) $request['username']=$user;
-error_log("rabbit_api: sending MQ request: ".json_encode($request))
+error_log("rabbit_api: sending MQ request: ".json_encode($request));
+try{
  $response = $client->send_request($request);
 	if(empty($response)) throw new Exception('Empty response from listener');
 }catch(Throwable $e){
-errr_log('rabit_api MQ error: '.$e->getMessage());
+errr_log('rabbit_api MQ error: '.$e->getMessage());
 http_response_code(502);
 echo json_encode(['success'=>false,'message'=>'RabbitMQ error: '.$e->getMessage()]);
-exit
+exit;
    }
 
 
