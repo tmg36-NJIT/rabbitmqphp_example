@@ -61,7 +61,7 @@ const closeBtn=document.getElementById('closeModal');
 const questions=[
 {key:'genre',text:'What genre are you into?',optins:['Action','Adventure','RPG']},
 {key:'platform',text:'Which plaform do yu play on?',options:['PC','PS5','Xbox']},
-{key:'year',text:'From what year oward do you prefer games?',input:true}
+{key:'year',text:'From what year onward do you prefer games?',input:true}
 ];
 
 function startInteractiveRec(){
@@ -70,5 +70,26 @@ function startInteractiveRec(){
  showQuestion();
 }
 
-function showQuestion {
+function showQuestion(){
+ const q=questions[step];
+ modalQ.textContent=q.text;
+ modalOpt.innerHTML='';
+ q.options.forEach(opt=>{
+ const b=document.createElement('button');
+ b.textContent=opt;
+ b.onclick=()=>{answers[q.key]=opt;nextStep();};
+modalOpt.appendChild(b);
+ });
+}
+if(q.input){
+ const select=document.createElement('select');
+ for(let y=new Date().getFullYear();y>=1990;y--){
+ const o=document.createElement('option');o.value=y;o.textContent=y;
+ select.appendChild(o);
+ }
+ modalOpt.appendChild(select);
+}
+
+
+
 ?>
