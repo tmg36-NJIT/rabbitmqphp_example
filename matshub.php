@@ -6,20 +6,18 @@ if(!isset($_SESSION['username'])){
   exit;
 }
 $username=$_SESSION['username'];
-$email=$_SESSION['email'] ?? '';
+$email=$_SESSION['email'] ?? '';?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>MATS: GameHub</title>
-</head>
-<body>
-</body>
-</html>
 
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="style.css">
-
+</head>
+<body>
 <header>
 <h1> <a href="matshub.php"> MATS: GameHub </a> </h1>
 
@@ -31,13 +29,13 @@ $email=$_SESSION['email'] ?? '';
 </header>
 <main></main>
 <div>
-<input id="gameSearch" type="text-align:center" placeholder="Search for a game">
+<input id="gameSearch" type="text" style = "text-align:center;"  placeholder="Search for a game">
   <div style="display:inline-flex;align-items:center;gap:8px;">
 <button id="btnSearch" type="button">Search</button>
   </div>
 </div>
 <div style="text-align:center;">
-<button id="startRecBtn" class="cool-btn"> Reccommend Me a Game!!" M/button>
+<button id="startRecBtn" class="cool-btn"> Reccommend Me a Game!!" </button>
 </div>
 
  <div id="recModal" class="modal">
@@ -51,6 +49,11 @@ $email=$_SESSION['email'] ?? '';
 </div>
 
 <footer>MATS: GameHub © | By RAWG API</footer>
+
+<script>
+
+let answers = {};
+let step = 0;
 
 const resultsEl=document.getElementById('results');
 const noteEl=document.getElementById('note');
@@ -70,17 +73,13 @@ function startInteractiveRec(){
  showQuestion();
 }
 
+const modalQ = document.getElementById('modalQuestion');
+const modalOpt = document.getElementById('modalOptions');
+
 function showQuestion(){
  const q=questions[step];
  modalQ.textContent=q.text;
  modalOpt.innerHTML='';
- q.options.forEach(opt=>{
- const b=document.createElement('button');
- b.textContent=opt;
- b.onclick=()=>{answers[q.key]=opt;nextStep();};
-modalOpt.appendChild(b);
- });
-}
 
 if(q.input){
  const select=document.createElement('select');
@@ -89,7 +88,17 @@ if(q.input){
  select.appendChild(o);
  }
  modalOpt.appendChild(select);
+ return; 
 }
+ q.options.forEach(opt=>{
+ const b=document.createElement('button');
+ b.textContent=opt;
+ b.onclick=()=>{answers[q.key]=opt;nextStep();};
+modalOpt.appendChild(b);
+ });
+}
+
+
 function nextStep(){
  step++;
  if(step<questions.length)showQuestion();
@@ -123,5 +132,6 @@ console.log('Recommendations:', data);
 }
 }
 
-
-?>
+</script>
+</body>
+</html>
