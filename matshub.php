@@ -132,6 +132,24 @@ console.log('Recommendations:', data);
 }
 }
 
+//trynna normalize backend responses
+function mapToCards(items){
+return items.map(g=>({
+name:g.name??'Unknown',
+ rating:g.rating??'N/A',
+released:g.released??'N/A'
+ }));
+} //and render dyanmic crds fir searches
+function renderGames(games){
+resultsEl.innerHTML='';
+for(const g of games){
+const c=document.createElement('div');
+c.innerHTML=`<h3>${g.name}</h3>
+<p>${g.released}</p>`;
+resultsEl.appendChild(c);
+ }
+}
+
 </script>
 </body>
 </html>
