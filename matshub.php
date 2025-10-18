@@ -149,6 +149,7 @@ c.innerHTML=`<h3>${g.name}</h3>
 resultsEl.appendChild(c);
  }
 }
+const placeholder=' '; //stil lookng for a placeholder, gon update latr"
 
 </script>
 </body>
