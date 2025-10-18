@@ -9,11 +9,19 @@ echo "Creating default rules..."
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
+sudo ufw logging on low #Adds logging
+
 #Creating custom port rules to deny unnecessary ports 
 echo "Setting port rules..."
 sudo ufw allow 80/tcp comment "Allow HTTP"
 sudo ufw allow 22/tcp comment "Allow SSH"
 sudo ufw allow 443/tcp comment "Allow HTTPS"
+sudo ufw allow from 192.168.192.0/24 to any port 5672 comment "Allow RabbitMQ from ZeroTier Network"
+sudo ufw allow from 192.168.192.0/24 to any port 15672 comment "Allow RabbitMQ MGMT from ZeroTier Network"
+
+sudo ufw deny 23/tcp comment "Deny Telnet"
+sudo ufw deny 25/tcp comment "Deny SMTP"
+sudo ufw deny 21/tcp comment "Deny FTP"
 
 #Firewall will remain on after restarts
 echo "Enabling firewall..."
