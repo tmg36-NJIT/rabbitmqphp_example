@@ -3,7 +3,7 @@
 // going to reformat code structure in this vers. for better readablity (sorted by deliverables)
 
 <?php
-//  SESSION SETUP & EMAIL CHECK (Auth + Email presence) - some setp for deliv. 5
+// SESSION SETUP & EMAIL CHECK (Auth + Email presence) - some setp for deliv. 5 
 
 session_start();
 require_once("rabbitMQLib.inc"); 
@@ -24,11 +24,11 @@ if (empty($email)) {
  ]);
  if (isset($response['has_email']) && $response['has_email'] === false) {
 $showEmailPrompt = true;
-        } elseif (!empty($response['email'])) {
+} elseif (!empty($response['email'])) {
 $_SESSION['email'] = $response['email'];
-        }
+   }
     } catch (Exception $e) {
-        error_log("Email check error: " . $e->getMessage());
+   error_log("Email check error: " . $e->getMessage());
     }
 }
 ?>
@@ -42,7 +42,7 @@ $_SESSION['email'] = $response['email'];
 </head>
 
 <body>
-//     HEADER: Title, User, Logout, Notification Bell
+ <!-- HEADER: Title, User, Logout, Notification Bell -->
 <header>
   <h1>
 <a href="matshub.php" style="text-decoration:none; color:inherit;">  MATS: GameHub  </a>
@@ -74,10 +74,71 @@ border:1px solid #2a2f38; border-radius:8px; padding:10px;" />
 </div> 
 
 <script>
-// === D1: Shared DOM for this section
+// D1: Shared DOM for this section
 const resultsEl = document.getElementById('results');
 const noteEl = document.getElementById('note');
 const spinnerEl = document.getElementById('loadingSpinner');
 const placeholder = 'https://via.placeholder.com/250x150?text=No+Image';
+
+ // Helpers (gon use these for other delivs. too (kept global)
+function clearUI() { resultsEl.innerHTML = ''; noteEl.textContent = ''; }
+function showNote(msg, isErr=false) { noteEl.textContent = msg; noteEl.className = 'center-note' + (isErr ? ' error' : ''); }
+document.getElementById('btnSearch').addEventListener('click', fetchGames);
+
+// For D1 (Deliverable 1) - function for search
+async function fetchGames() {
+const q = document.getElementById('gameSearch').value.trim();
+clearUI();
+   if (!q) return showNote('Enter a game name.');
+  spinnerEl.style.display = 'block';
+  showNote('Loading…');
+    try {
+  const res = await fetch(`rabbit_search.php?genre=${encodeURIComponent(q)}`);
+  const data = await res.json();
+ console.log("DEBUG:", data);
+  renderGames(mapToCards(data.results || []));
+      } catch (e) {
+    console.error(e);
+    showNote('Error fetching data.', true);
+     spinnerEl.style.display = 'none';
+      }
+    }
+
+ // Also D1: fop mappiong api cards
+function mapToCards(items) {
+if (!Array.isArray(items)) return [];
+return items.map(g => ({id: g.id ?? 0, name: g.name ?? 'Unknown',
+        rating: g.rating ?? 'N/A',released: g.released ?? 'N/A',
+image: g.background_image ?? g.image ?? placeholder
+      }));
+    }
+// D1 too --> for rendring the czards
+function renderGames(games) {
+resultsEl.innerHTML = '';
+noteEl.textContent = '';
+resultsEl.classList.remove('show');
+void resultsEl.offsetWidth;
+resultsEl.classList.add('show');
+
+if (!games.length) return showNote('No results found.');
+
+for (const g of games) {
+  const reason = `Because you like ${window.answers?.genre || 'varied genres'} games on ${window.answers?.platform || 'your chosen platform'}.`;
+    const card = document.createElement('div');
+  card.className = 'game-card';
+
+//add to my list button + view details button
+ card.innerHTML = `
+ <img src="${g.image}" alt="${g.name}">
+ <h3>${g.name}</h3>
+<div class="game-info"> ${g.rating}<br> ${g.released}</div>
+<p style="font-size:0.8rem;color:#9aa0aa;margin-top:6px;">${reason}</p>
+<button style="margin-top:8px;" onclick="viewDetails(${g.id})"> View Details</button>
+<button style="margin-top:8px;" onclick="rateGame('${g.name.replace(/'/g,"\\'")}')"> Rate / Review</button>
+<button style="margin-top:8px;" onclick="addToMyList(${g.id}, '${g.name.replace(/'/g,"\\'")}')">➕ Add to My List</button>
+<div id="reviews-${g.name.replace(/\s+/g, '_')}" style="margin-top:10px;font-size:0.85rem;color:#ccc;"></div>
+     `; resultsEl.appendChild(card);  //used specific online presets for formatting
+// so far updated structure/formatting/styling + added tweaks like the email setup, etc.
+// Going to implement my old functions like fetchReccomendations, etc a lil later since im trynna do a organize it by deliverable
 
 
