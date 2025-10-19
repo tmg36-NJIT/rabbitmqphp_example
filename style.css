@@ -57,4 +57,43 @@ body::before {
 		radial-gradient(circle at bottom right, rgba(79,163,255,.1), transparent 70%);
 	z-index: -1;
 }
+
+/*Button Styling*/
+button {
+	background: #4fa3ff;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	padding: 12px 18px;
+	cursor: pointer;
+	transition: .15s ease;
+}
+
+button:hover {
+	background: #357fda;
+}
+
+.cool-btn {
+	background: linear-gradient(135deg, #4fa3ff, #357fda);
+	color: #fff;
+	border: none;
+	border-radius: 10px;
+	padding: 14px 26px;
+	font-size: 1.05rem;
+	font-weight: 500;
+	cursor: pointer;
+	box-shadow: 0 0 10px rgba(79,163,255,.3);
+	transition: all .25s ease;
+}
+
+.cool-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 0 18px rgba(79,163,255,.55);
+	background: linear-gradient(135deg, #5ab0ff, #3c88e3);
+}
+
+.cool-btn:active {
+	transform: translateY(1px);
+	box-shadow: 0 0 6px rgba(79,163,255,.4);
+}
 </style>
