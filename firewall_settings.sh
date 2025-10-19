@@ -11,17 +11,33 @@ sudo ufw default allow outgoing
 
 sudo ufw logging on low #Adds logging
 
-#Creating custom port rules to deny unnecessary ports 
+#Public Access Ports
 echo "Setting port rules..."
 sudo ufw allow 80/tcp comment "Allow HTTP"
-sudo ufw allow 22/tcp comment "Allow SSH"
 sudo ufw allow 443/tcp comment "Allow HTTPS"
-sudo ufw allow from 192.168.192.0/24 to any port 5672 comment "Allow RabbitMQ from ZeroTier Network"
-sudo ufw allow from 192.168.192.0/24 to any port 15672 comment "Allow RabbitMQ MGMT from ZeroTier Network"
 
+#Local System Service Ports
+sudo ufw allow in on lo to any port 53 comment "Allow local DNS"
+sudo ufw allow in on lo to any port 5353/udp comment "Allow local mDNS/Avahi"
+
+#Internal Network Access Ports
+sudo ufw allow from 192.168.192.0/24 to any port 22/tcp comment "Allow SSH Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 5672 comment "Allow RabbitMQ Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 15672 comment "Allow RabbitMQ MGMT Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 25672/tcp comment "Allow RabbitMQ Cluster Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 4369/tcp comment "Allow Erlang Node Discovery Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 19999/tcp comment "Allow Netdata Dashboard Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 8125/tcp comment "Allow Netdata/statsd Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 3306/tcp comment "Allow MySQL Server Internally"
+sudo ufw allow from 192.168.192.0/24 to any port 33060/tcp comment "Allow MySQL Plugin Internally"
+
+#Deny Unused or Unnecessary Ports
 sudo ufw deny 23/tcp comment "Deny Telnet"
 sudo ufw deny 25/tcp comment "Deny SMTP"
 sudo ufw deny 21/tcp comment "Deny FTP"
+sudo ufw deny 110/tcp comment "Deny POP3"
+sudo ufw deny 143/tcp comment "Deny IMAP"
+sudo ufw deny 631/tcp comment "Deny Printing (CUPS)"
 
 #Firewall will remain on after restarts
 echo "Enabling firewall..."
