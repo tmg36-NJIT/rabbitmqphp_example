@@ -69,6 +69,34 @@ function doRegisterDB($username, $password){
 }
 
 
+
+function updateUserEmail($username, $email){
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	 if($mysqli->connect_errno)return ['success' => false, 'message' => 'DB connection failed']; 
+	
+	$stmt=$mysqli->preapre("UPDATE users SET email=? WHERE username=?");
+	if(!$stmt){$mysqli->close();
+	  return['success' => false, 'message'=> 'Query failed'];}
+	
+	$stmt->bind_param("ss", $email, $username);
+	$stmt->execute();
+	$affected=$stmt->affected_rows;
+	$stmt->close()
+	$mysqli->close();
+
+	if($affected >0){return['success' => true, 'message'=> 'Your email is updated!'];
+	}else {return ['success' => false, 'message'=> 'cant find someioen with that username'];}
+}
+
+
+
+
+
+
+
+
+
+
 function getGameRecommendations($query = null) {
 	$apiKey='e92e94964e714d64aa425f8c11d0996e';
 	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
