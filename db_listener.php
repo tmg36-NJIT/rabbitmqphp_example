@@ -81,17 +81,34 @@ function updateUserEmail($username, $email){
 	$stmt->bind_param("ss", $email, $username);
 	$stmt->execute();
 	$affected=$stmt->affected_rows;
-	$stmt->close()
+	$stmt->close();
 	$mysqli->close();
 
 	if($affected >0){return['success' => true, 'message'=> 'Your email is updated!'];
-	}else {return ['success' => false, 'message'=> 'cant find someioen with that username'];}
+	}else {return ['success' => false, 'message'=> 'cant find someone with that username'];}
 }
 
 
 
+function checkUserEmail($username){
+	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	     if($mysqli->connect_errno)return ['success' => false, 'has_email' => false, 'message' => 'DC connection failed'];
+	
+	$stmt= $mysqli->prepare("SELECT email FROM USERS WHERE username=?");
+	if(!$stmt){ $mysqli->close();
+	      return['success' => false, 'has_email' => flase, 'message'=> 'Query failed'];
+	
+	$stmt->bind_param("s", $username);
+	$stmt->execute();
+	$result= $smtmt->get_result();
+	$email='';
+	if($row= $result->fetch_assoc()){$email= $row['email']?? '';}
 
-
+	$stmt->close()
+	$mysqli->close();
+	$hasemail= !empty($email);
+	  return9'success'=> true, 'has_email'=>$hasEmail, 'email' => $email];
+}
 
 
 
@@ -171,15 +188,22 @@ function requestProcessor($request) {
 		 return doLoginDB($request['username'], $request['password']);
 		case 'register':
 		 return doRegisterDB($request['username'], $request['password']);
+		case'update_email':
+		  return updateUserEmail($request['username'], $request['email']);
+		case 'check_email':
+		   return checkUserEmail($request['username']);
+
 		case 'get_recommendations':
 		 $query= $request['query'] ??null;
 		$username= $request['username']?? 'Guest';
 		if ($query){saveUserSearch($username, $query);}
 		 return getGameRecommendations($query);
+
 		case 'submit_review':
 		 $username= $request['username']??'Guest';
 		 $reviewText=$request['review']?? ($request['comment'] ?? '');
 		return submitReview($username,$request['game_name'], $request['rating'], $reviewText);
+
 		case 'get_reviews':
 		return getReviews($request['game_name']);
 		default:
