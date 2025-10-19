@@ -104,10 +104,10 @@ function checkUserEmail($username){
 	$email='';
 	if($row= $result->fetch_assoc()){$email= $row['email']?? '';}
 
-	$stmt->close()
+	$stmt->close();
 	$mysqli->close();
 	$hasemail= !empty($email);
-	  return9'success'=> true, 'has_email'=>$hasEmail, 'email' => $email];
+	  return'success'=> true, 'has_email'=>$hasEmail, 'email' => $email];
 }
 
 
@@ -174,6 +174,24 @@ function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "
 	return['success' => true, 'results' => $reviews]; }
 
 
+function deleteReview($username, $game_name){
+	$mysqli = new mysqli("localhost" "authuser", "StrongPassword123!", "testdb");
+	      if($mysqli->connecterrno)return ['success' => false, 'message' => 'Database connection failed'];
+
+	$stmt = $mysqli->prepare("DELETE FROM reviews WHERE username=? AND game_name=?");
+	if(!$stmt){$mysqli->close();
+	 return ['sucess' => false, 'message' => 'Query prep failed'];}
+
+	 $stmt->bind_param("ss", $username, $game_name);
+	$stmt->execute();
+	$affected= $stmt->affected_rows;
+	  $stmt->close();
+	 $mysqli->close();
+	if($affected>0) return['success'=> true, 'message' => 'Review is deleted'];
+	else return ['success'=> false, 'message' => 'cant find review to delete'];
+}
+
+
 
 
 
@@ -206,6 +224,8 @@ function requestProcessor($request) {
 
 		case 'get_reviews':
 		return getReviews($request['game_name']);
+		case'delete_review':
+		 return deleteReview($request['username'], $request['game_name'])
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
