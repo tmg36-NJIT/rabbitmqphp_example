@@ -26,7 +26,7 @@ if (empty($email)) {
  ]);
 
  if (isset($response['has_email']) && $response['has_email'] === false) {
-$showEmailPrompt = true;
+$shouldAskForEmail = true;    //forgot to update variable after renaming, fixed 
 } elseif (!empty($response['email'])) {
 $_SESSION['email'] = $response['email'];
    }
@@ -53,8 +53,7 @@ $_SESSION['email'] = $response['email'];
   <form action="logout.php" method="post" style="display:inline;">
     <button type="submit" class="logout-btn">Logout</button>
   </form>
-<footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
-
+</header>
 <main>
 
 <! -- Deliverable 1: Search feature w/ details/browse  -->  //going to try to sort into this chronological format for delivs. (not gonna be perfect)
@@ -186,7 +185,37 @@ async function viewDetails(gameId) {
    ? g.platforms[0].requirements.minimum
    : 'N/A';
 
-//gon add the modal for details later
+//gon add the modal for details later (Update: added)
+
+const html = `
+  <div
+   id="detailsModal"
+   class="modal show"
+   onclick="if (event.target.id === 'detailsModal') { document.getElementById('detailsModal').remove(); }" >
+    <div class="modal-content">
+    <button
+        onclick="document.getElementById('detailsModal').remove();"
+        style="position:absolute; top:10px; right:14px; background:none; border:none; color:#ccc; font-size:22px; cursor:pointer;"
+        aria-label="Close details"
+      >×</button>
+<h2 style="margin-top:0; font-size:1.25rem; letter-spacing:.2px;">
+      ${g.name}  </h2>
+       <img
+        src="${g.background_image}"
+        alt="${g.name}"
+        style="width:100%; max-height:400px; object-fit:cover; border-radius:6px; margin:10px 0;">
+     <p><strong>Released:</strong> ${g.released || 'N/A'}</p>
+     <p><strong>Platforms:</strong> ${platforms}</p>
+     <p><strong>System Requirements:</strong> ${requirements}</p>
+
+      <p style="margin-top:10px; line-height:1.5;">
+        ${g.description_raw || 'No description available.'}
+      </p>
+    </div>
+  </div>
+`;
+document.body.insertAdjacentHTML('beforeend', html);
+
 </script> 
 </section>
 
@@ -234,7 +263,60 @@ async function viewDetails(gameId) {
     </div>
     </div>
 
-<! -- Deliverable 3: Reccomendation System  -->
+<script>
+let currentGame = "";
+
+function rateGame(gameName) {
+currentGame = gameName;
+document.getElementById("modalGameTitle").innerText = `Rate / Review: ${gameName}`;
+document.getElementById("reviewModal").classList.add("show");
+      }
+function closeReviewModal() {
+document.getElementById("reviewModal").classList.remove("show");
+      }
+async function submitReview() {
+const rating   = document.getElementById("ratingSelect").value;
+const review   = document.getElementById("reviewText").value.trim();
+const username = "<?= htmlspecialchars($username) ?>";
+
+if (!rating || !review) {
+   showErrorPopup("Please select a rating and enter a review.");
+          return;
+        }
+try {
+  const res = await fetch("rabbit_search.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+  type: "submit_review",
+  username,
+  game_name: currentGame,
+  rating,
+  comment: review
+            })
+          });
+const data = await res.json();
+if (data?.success) {
+showPopup();
+closeReviewModal();
+loadReviews(currentGame);
+} else if (String(data?.message || '').includes("already rated")) {
+closeReviewModal();
+showNotice("You already rated this game.");
+ } else {
+   showErrorPopup(data?.message || "Error submitting review.");
+          }
+  } catch (err) {
+console.error("submitReview error:", err);
+showErrorPopup("Error submitting review. Please try again.");
+        }
+      }
+
+
+
+</script>
+
+<!-- Deliverable 3: Reccomendation System -->
 //alrdy have base code from matshub.php, gon upload extended ver. here
  <section id="deliverable-3">
     <!-- The only button to start the flow -->
@@ -262,6 +344,7 @@ async function viewDetails(gameId) {
 
 <! -- Deliverable 6: Messsage Board System -->
 
-
+</main>
+<footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
 </body>
 </html>
