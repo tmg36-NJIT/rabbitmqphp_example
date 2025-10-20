@@ -176,7 +176,7 @@ function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "
 
 function deleteReview($username, $game_name){
 	$mysqli = new mysqli("localhost" "authuser", "StrongPassword123!", "testdb");
-	      if($mysqli->connecterrno)return ['success' => false, 'message' => 'Database connection failed'];
+	      if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
 
 	$stmt = $mysqli->prepare("DELETE FROM reviews WHERE username=? AND game_name=?");
 	if(!$stmt){$mysqli->close();
@@ -189,6 +189,28 @@ function deleteReview($username, $game_name){
 	 $mysqli->close();
 	if($affected>0) return['success'=> true, 'message' => 'Review is deleted'];
 	else return ['success'=> false, 'message' => 'cant find review to delete'];
+}
+
+
+
+function addToWatchlist($username, $game_id, $game_name){
+        $mysqli = new mysqli("localhost" "authuser", "StrongPassword123!", "testdb");
+          if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
+
+	try{$stmt = $mysqli->prepare("INSERT INTO watchlist (username, game_id, game_name, last_updated) VALUES (?, ?, ?, NOW()");
+	 if(!$stmt){$mysqli->close();
+	 return['success'=> false, 'message'=> 'Query prep failed'];}
+
+
+	$stmt->bind_param("sis", $username, $game_id, $game_name);
+	$stmt->execute();
+	$stmt->close()
+	$mysqli->close();
+	return['success'=> true, 'message'=> 'The game is now in your watchlist'];
+
+	}catch (mysqli_sql_exception $e){
+	 if(str_contains($e->getMessage(), 'Duplicate entry')){return ['success'=> false, 'message'=> 'Game is already in your watchlist'];}
+	return['success'=> false, 'nessage'=> 'Error adding to watchlist: ' . $e->getMessage()];}
 }
 
 
@@ -225,7 +247,10 @@ function requestProcessor($request) {
 		case 'get_reviews':
 		return getReviews($request['game_name']);
 		case'delete_review':
-		 return deleteReview($request['username'], $request['game_name'])
+		 return deleteReview($request['username'], $request['game_name']);
+		case 'add_watchlist':
+		 return addToWatchlist($request['username'], $request['game_id'], $request['game_name']);
+
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
