@@ -214,6 +214,24 @@ function addToWatchlist($username, $game_id, $game_name){
 }
 
 
+function getWatchlist($username){
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	 if($mysqli->connect_errno) return ['success'=> false, 'message'=> 'DB connection failed']
+
+	$stmt= $mysqli->prepare("SELECT game_name game_id last_updated FROM watchlist WHERE username=? ORDER BY last_updated DESC");
+	 if(!$stmt){$mysqli->close();
+        return ['success'=> false, 'message'=> 'Query prep failed'];}
+
+	$stmt->bind_param("s", $username);
+	 $stmt->execute();
+	$result= $stmt->getresult();
+	$games=[];
+	while($row = $result->fetch_assoc(); $games[]= $row;
+
+	$stmt->close();
+	$mysqli->close();
+	return ['success'=> true, 'results'=>$games];
+}
 
 
 
@@ -250,7 +268,8 @@ function requestProcessor($request) {
 		 return deleteReview($request['username'], $request['game_name']);
 		case 'add_watchlist':
 		 return addToWatchlist($request['username'], $request['game_id'], $request['game_name']);
-
+		case 'get_watchlist':
+		 return getWatchlist($request['username']);
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
@@ -267,7 +286,7 @@ $server->process_requests(function($request) {
 	 $response = requestProcessor($request);
 	echo "Response: \n";
 	var_dump($response);
-	return $response; } );
+	return $response;});
 
 
 ?>
