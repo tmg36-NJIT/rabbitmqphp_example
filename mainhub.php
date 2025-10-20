@@ -56,25 +56,36 @@ $_SESSION['email'] = $response['email'];
 </header>
 <main>
 
-<! -- Deliverable 1: Search feature w/ details/browse  -->  //going to try to sort into this chronological format for delivs. (not gonna be perfect)
+<!-- Deliverable 1: Search feature w/ details/browse -->
+<!-- going to try to sort into this chronological format for delivs. (not gonna be perfect) -->
 
 <section id="deliverable-1">
 <div style="text-align:center; margin-bottom:20px;">
 <div style="display:inline-flex; align-items:center; gap:8px;">
-<input id="gameSearch" type="text"
-placeholder="Search for a game (e.g. Elden Ring)
-style="width:700px; max-width:90%; background:#1a1d24; color:#fff
-border:1px solid #2a2f38; border-radius:8px; padding:10px;" />
+
+<input
+  id="gameSearch"
+  type="text"
+  placeholder="Search for a game (e.g. Elden Ring)"
+/>
 <button id="btnSearch" type="button">Search</button>
 </div>
 </div>
 
-<!-- Results + Notes + Loading --> //used stock loading icon found online 
+<!-- Results + Notes + Loading (used stock loading icon found online) -->
 <div id="results" class="results-grid"></div>
 <div id="note" class="center-note"></div>
 <div id="loadingSpinner" style="display:none;text-align:center;margin-top:20px;">
 <img src="https://i.imgur.com/llF5iyg.gif" width="60" alt="Loading...">
 </div> 
+
+
+<script> //put this here to prevent blocker 
+window._reviewsQueue = window._reviewsQueue || [];
+if (typeof window.loadReviews !== "function") {
+window.loadReviews = function(name) { window._reviewsQueue.push(name); };
+}
+</script>
 
 <script>
 // D1: Shared DOM for this section
@@ -147,7 +158,7 @@ for (const g of games) {
     <img src="${g.image}" alt="${g.name}">
     <h3>${g.name}</h3>
           
-   <div class="game-info"> ${g.rating}<br> ${g.released}</div> //may add back emotes  
+   <div class="game-info"> ${g.rating}<br> ${g.released}</div> 
    <p style="font-size:.86rem; color:#9aa0aa; margin-top:6px;">${reason}</p>
 
    <button class="btn small" style="margin-top:8px;" onclick="viewDetails(${g.id})">View Details</button>
@@ -215,17 +226,22 @@ const html = `
   </div>
 `;
 document.body.insertAdjacentHTML('beforeend', html);
-
-</script> 
+} catch (err) {
+  console.error("details error:", err);
+  spinnerEl.style.display = 'none';
+  say('Error loading details.', true);
+}
+}
+</script>
 </section>
 
-<! -- Deliverable 2: Review + Rating System  --> 
+<!-- Deliverable 2: Review + Rating System -->
 <section id="deliverable-2">
 <div id="reviewModal" class="modal">
 <div class="modal-content">
  <h2 id="modalGameTitle">Rate / Review</h2>
        <label for="ratingSelect" style="color:#e9edf1;">Rating</label>
-        <select id="ratingSelect" style="width:100%; margin-bottom:10px; background:#151a21; color:#e9edf1; border:1px solid #2b3341; border-radius:6px; padding:8px;">
+        <select id="ratingSelect">
           <option value="1">1 - Overwhelmingly Negative</option>
           <option value="2">2 - Negative</option>
           <option value="3">3 - Decent</option>
@@ -302,47 +318,203 @@ closeReviewModal();
 loadReviews(currentGame);
 } else if (String(data?.message || '').includes("already rated")) {
 closeReviewModal();
-showNotice("You already rated this game.");
+showNotice("You already ratd this game.");
  } else {
    showErrorPopup(data?.message || "Error submitting review.");
           }
   } catch (err) {
 console.error("submitReview error:", err);
-showErrorPopup("Error submitting review. Please try again.");
+showErrorPopup("Eror submiting review. Please try again.");
         }
       }
 
+async function loadReviews(gameName) {
+const el = document.getElementById(`reviews-${gameName.replace(/\s+/g, '_')}`);
 
+if (!el) return;
+el.innerHTML = "<em>Loading reiews...</em>";
+
+try {
+const res = await fetch("rabbit_search.php", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ type: "get_reviews", game_name: gameName })
+});
+
+const data = await res.json();
+if (data?.success && Array.isArray(data.results) && data.results.length) {
+el.innerHTML = data.results.map(r => {
+const mine = r.username === "<?= htmlspecialchars($username) ?>";
+return `
+
+<div class="review-card">
+<strong>${r.username}</strong> — ${r.rating}/5<br>
+"${r.review}"<br>
+
+<small style="color:#8b93a2;">${r.created_at}</small>
+${mine ? `<div style="margin-top:6px;"><button class="btn small" data-del="1" data-game="${gameName}">Delete My Review</button></div>` : ""}
+</div>
+`;
+
+}).join("");
+el.querySelectorAll('[data-del="1"]').forEach(btn => {
+btn.addEventListener('click', async () => {
+
+const game = btn.dataset.game;
+try {
+const delRes = await fetch("rabbit_search.php", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ type: "delete_review", username: "<?= htmlspecialchars($username) ?>", game_name: game })
+});
+const out = await delRes.json();
+	
+if (out?.success) {
+showNotice("Your review was deleted.");
+loadReviews(game);
+}
+ else {
+showNotice(out?.message || "Could not delete review.");
+}
+} catch (e) {
+showNotice("Error deleting review.");
+}
+});
+});
+} else {
+el.innerHTML = "<em>No reviews yet.</em>";
+}
+} catch (err) {
+console.error("loadReviews error:", err);
+el.innerHTML = "<em>Error loading reviews.</em>";
+}
+}
+(function () {
+  if (Array.isArray(window._reviewsQueue) && window._reviewsQueue.length) {
+    const q = window._reviewsQueue.slice();
+    window._reviewsQueue.length = 0;
+    q.forEach(n => loadReviews(n));
+  }
+})();
+function showPopup() {
+document.getElementById("successPopup").classList.add("show");
+}
+function closePopup() {
+document.getElementById("successPopup").classList.remove("show"); }
+function showErrorPopup(message) {
+document.getElementById("errorPopupMessage").innerText = message;
+document.getElementById("errorPopup").classList.add("show");
+}
+function closeErrorPopup() {
+document.getElementById("errorPopup").classList.remove("show")  }
+
+function showNotice(message) {
+
+const box = document.getElementById('reviewNotice');
+const text = document.getElementById('noticeMessage');
+
+text.textContent = message;
+box.style.display = 'block';
+}
+document.getElementById('closeNotice').onclick = () => {
+document.getElementById('reviewNotice').style.display = 'none';
+};
 
 </script>
+</section>
 
-<!-- Deliverable 3: Reccomendation System -->
-//alrdy have base code from matshub.php, gon upload extended ver. here
+<!-- Deliverable 3: Recommendation System -->
+<!-- alrdy have base code from matshub.php, gon upload extended ver. here -->
+<!-- currently working on implementing recs based on cache data on top of filtering, will integrate after deliv. 4-5 -->
+
  <section id="deliverable-3">
     <!-- The only button to start the flow -->
     <div style="text-align:center; margin-top:10px;">
       <button id="startRecBtn" class="cool-btn">Recommend Me a Game</button>
     </div>
-
-
-
+</section>
 
 
 <!-- Deliverable 4: Watchlist System -->
+<section id="deliverable-4">
+<div style="text-align:center; margin-top:10px;">
+<button id="viewWatchlistBtn" class="cool-btn">View My List</button>
+</div>
+
+<!-- script for adding to list - ip -->
+<script> 
+     async function addToMyList(gameId, gameName) {
+     const username = "<?= htmlspecialchars($username) ?>";
+     try {
+     const res = await fetch("rabbit_search.php", {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({
+     type: "add_watchlist",
+     username,
+     game_id: gameId,
+     game_name: gameName
+            })
+          });
+     const data = await res.json();
+     if (data?.success) {
+            showNotice(`Added: ${gameName}`);
+          } else {
+            showNotice(data?.message || "Could not add game.");
+          }
+  } catch (err) {
+   console.error("addToMyList error:", err);
+   showNotice("Server error while adding game.");
+        }
+      }
+
+  async function fetchWatchlist() {
+  const username = "<?= htmlspecialchars($username) ?>";
+  try {
+  const res = await fetch("rabbit_search.php", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ type: "get_watchlist", username })
+          });
+  const data = await res.json();
+  if (!data?.success || !Array.isArray(data.results) || !data.results.length) {
+  showNotice("Your list is empty.");
+            return;
+          }
+
+ const html = data.results.map(g => `
+ <div style="background:#1e222b; padding:10px; margin:10px; border-radius:6px;">
+<strong>${g.game_name}</strong><br>
+<small>Added on ${g.added_at || 'N/A'}</small>
+      </div>
+          `).join("");
+ const modal = `
+ <div id="watchlistModal" class="modal show" onclick="if(event.target.id==='watchlistModal'){document.getElementById('watchlistModal').remove();}">
+ <div class="modal-content" style="max-width:650px;">
+ <button onclick="document.getElementById('watchlistModal').remove();"
+ style="position:absolute; top:10px; right:14px; background:none; border:none; color:#ccc; font-size:22px; cursor:pointer;">×</button>
+ <h2 style="margin:0 0 8px 0;">Your Game List</h2>
+  ${html}
+ </div>
+</div>
+          `;
+document.body.insertAdjacentHTML('beforeend', modal);
+        } catch (err) {
+console.error("fetchWatchlist error:", err);
+showNotice("Error loading your list.");
+        }
+      }
+ document.getElementById("viewWatchlistBtn").addEventListener("click", fetchWatchlist);
+   
+//still need to add html modal; will add soon
+ </script>
+  </section>
 
 
 
 
-
-
-<! -- Deliverable 5: Notification System
-
-
-
-
-
-
-<! -- Deliverable 6: Messsage Board System -->
+<!-- Deliverable 5: Notification System -->
+<!-- Deliverable 6: Message Board System -->
 
 </main>
 <footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
