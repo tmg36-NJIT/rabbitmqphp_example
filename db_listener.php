@@ -4,6 +4,7 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+//USER AUTH
 function createSession($user_id) {
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){
@@ -46,6 +47,7 @@ function doLoginDB($username, $password) {
 	} else { return ['success' => false, 'message' => "Invalid username and/or password"];}
 }
 
+
 function doRegisterDB($username, $password){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed'];}
@@ -67,9 +69,10 @@ function doRegisterDB($username, $password){
 
 
 }
+//USER AUTH END
 
 
-
+//usr email
 function updateUserEmail($username, $email){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno)return ['success' => false, 'message' => 'DB connection failed']; 
@@ -92,9 +95,9 @@ function updateUserEmail($username, $email){
 
 function checkUserEmail($username){
 	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
-	     if($mysqli->connect_errno)return ['success' => false, 'has_email' => false, 'message' => 'DC connection failed'];
+	     if($mysqli->connect_errno)return ['success' => false, 'has_email' => false, 'message' => 'DB connection failed'];
 	
-	$stmt= $mysqli->prepare("SELECT email FROM USERS WHERE username=?");
+	$stmt= $mysqli->prepare("SELECT email FROM users WHERE username=?");
 	if(!$stmt){ $mysqli->close();
 	      return['success' => false, 'has_email' => flase, 'message'=> 'Query failed'];
 	
@@ -110,7 +113,47 @@ function checkUserEmail($username){
 	  return'success'=> true, 'has_email'=>$hasEmail, 'email' => $email];
 }
 
+//end usr email
 
+
+
+//notifications
+function getNotifications($username){
+	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	 if($mysqli->connect_errno) return['success' => false, 'message'=> 'DB connection failed'];
+
+	$stmt = $mysqli->prepare("SELECT id message is_read created_at FROM notifications WHERE username=? ORDER BY created_at DESC");
+	if(!$stmt){ $mysqli->close();
+	return ['success' => false, 'message' => 'Query prep failed'];}
+	$stmt->bind_param("s", $username);
+	$stmt->execute();
+	$result = $stmt->get_result();
+
+	$notifications = [];
+	while ($row = $result->fetch_assoc()) $notifications[] = $row;
+
+	$stmt->close();
+	$mysqli->close()
+	return ['success'=> true, 'notifications'=> $notifications];
+}
+
+
+
+//end notifications
+
+
+//fetch api data
+function getGameDetails($game_id){
+	$apiKey= 'e92e94964e714d64aa425f8c11d0996e';
+	$url= 'https://api.rawg.io/api/games/' . urlencode($game_id) . '?key=' . $apiKey;
+
+	$response = @file_get_contents($url);
+	if($response === false){ return ['success'=> false, 'message' => 'Error retrieving game details'];}
+
+	$data= json_decode($response, true);
+	if(!$data){ return ['success'=> false, 'message'=> 'Invalid API response'];}
+	return ['success' => true, 'results' => $data];
+}
 
 
 
@@ -125,6 +168,9 @@ function getGameRecommendations($query = null) {
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
 
+//end fetch
+
+//cache user data
 function saveUserSearch($username, $query){
 	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return false; };
@@ -138,10 +184,10 @@ function saveUserSearch($username, $query){
 	$stmt->close();
 	$mysqli->close();
 	return true;}
+//end save data
 
 
-
-
+//user reviews
 function submitReview($username, $game_name, $rating, $review){ 
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return['success' =>false, 'message'=> 'database connection failed']; }
@@ -190,9 +236,11 @@ function deleteReview($username, $game_name){
 	if($affected>0) return['success'=> true, 'message' => 'Review is deleted'];
 	else return ['success'=> false, 'message' => 'cant find review to delete'];
 }
+//end user reviews
 
 
 
+//watchlist for user
 function addToWatchlist($username, $game_id, $game_name){
         $mysqli = new mysqli("localhost" "authuser", "StrongPassword123!", "testdb");
           if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
@@ -232,8 +280,11 @@ function getWatchlist($username){
 	$mysqli->close();
 	return ['success'=> true, 'results'=>$games];
 }
+//watchlist end
 
 
+
+//requestProcessor
 
 function requestProcessor($request) {
 	echo "Received request:";
@@ -246,10 +297,17 @@ function requestProcessor($request) {
 		 return doLoginDB($request['username'], $request['password']);
 		case 'register':
 		 return doRegisterDB($request['username'], $request['password']);
+
 		case'update_email':
 		  return updateUserEmail($request['username'], $request['email']);
 		case 'check_email':
 		   return checkUserEmail($request['username']);
+
+		case'get_notifications':
+		 return getNotifications($request['username']);
+
+		case'get_details':
+		 return getGameDetails($request['game_id']);
 
 		case 'get_recommendations':
 		 $query= $request['query'] ??null;
@@ -266,17 +324,19 @@ function requestProcessor($request) {
 		return getReviews($request['game_name']);
 		case'delete_review':
 		 return deleteReview($request['username'], $request['game_name']);
+
 		case 'add_watchlist':
 		 return addToWatchlist($request['username'], $request['game_id'], $request['game_name']);
 		case 'get_watchlist':
 		 return getWatchlist($request['username']);
+
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
 
 
 
-
+//Listener
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
 echo "connected to broker: ". $server->BROKER_HOST. "\n";
