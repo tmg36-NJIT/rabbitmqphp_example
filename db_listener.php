@@ -76,11 +76,11 @@ function doRegisterDB($username, $password){
 function updateUserEmail($username, $email){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno)return ['success' => false, 'message' => 'DB connection failed']; 
-	
-	$stmt=$mysqli->preapre("UPDATE users SET email=? WHERE username=?");
+
+	$stmt=$mysqli->prepare("UPDATE users SET email=? WHERE username=?");
 	if(!$stmt){$mysqli->close();
 	  return['success' => false, 'message'=> 'Query failed'];}
-	
+
 	$stmt->bind_param("ss", $email, $username);
 	$stmt->execute();
 	$affected=$stmt->affected_rows;
@@ -96,21 +96,21 @@ function updateUserEmail($username, $email){
 function checkUserEmail($username){
 	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	     if($mysqli->connect_errno)return ['success' => false, 'has_email' => false, 'message' => 'DB connection failed'];
-	
+
 	$stmt= $mysqli->prepare("SELECT email FROM users WHERE username=?");
 	if(!$stmt){ $mysqli->close();
-	      return['success' => false, 'has_email' => flase, 'message'=> 'Query failed'];
-	
+	      return['success' => false, 'has_email' => false, 'message'=> 'Query failed'];}
+
 	$stmt->bind_param("s", $username);
 	$stmt->execute();
-	$result= $smtmt->get_result();
+	$result= $stmt->get_result();
 	$email='';
 	if($row= $result->fetch_assoc()){$email= $row['email']?? '';}
 
 	$stmt->close();
 	$mysqli->close();
-	$hasemail= !empty($email);
-	  return'success'=> true, 'has_email'=>$hasEmail, 'email' => $email];
+	$hasEmail= !empty($email);
+	  return['success'=> true, 'has_email'=>$hasEmail, 'email' => $email];
 }
 
 //end usr email
@@ -124,7 +124,7 @@ function getNotifications($username){
 	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno) return['success' => false, 'message'=> 'DB connection failed'];
 
-	$stmt = $mysqli->prepare("SELECT id message is_read created_at FROM notifications WHERE username=? ORDER BY created_at DESC");
+	$stmt = $mysqli->prepare("SELECT id, message, is_read, created_at FROM notifications WHERE username=? ORDER BY created_at DESC");
 	if(!$stmt){ $mysqli->close();
 	return ['success' => false, 'message' => 'Query prep failed'];}
 	$stmt->bind_param("s", $username);
@@ -142,14 +142,14 @@ function getNotifications($username){
 
 
 function markNotificationRead($notification_id) {
-	$mysqli- new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno) return ['success'=> false, 'message' => 'DB connection failed'];
 
 	$stmt= $mysqli->prepare("UPDATE notifications SET is_read=1 WHERE id=?");
 	 if(!$stmt){ $mysqli->close();
 	return ['success'=> false, 'message'=> 'Query prep failed'];}
 
-	$stmt->bind_param("i", $notification_id;
+	$stmt->bind_param("i", $notification_id);
 	$stmt->execute();
 	$affected= $stmt->affected_rows;
 
@@ -201,7 +201,7 @@ function saveUserSearch($username, $query){
 		if(!$stmt){$mysqli->close();
 		return false;}
 
-	 $stmt->bind_params("is", $username, $query);
+	 $stmt->bind_param("ss", $username, $query);
 	$stmt->execute();
 	$stmt->close();
 	$mysqli->close();
@@ -243,12 +243,12 @@ function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "
 
 
 function deleteReview($username, $game_name){
-	$mysqli = new mysqli("localhost" "authuser", "StrongPassword123!", "testdb");
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	      if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
 
 	$stmt = $mysqli->prepare("DELETE FROM reviews WHERE username=? AND game_name=?");
 	if(!$stmt){$mysqli->close();
-	 return ['sucess' => false, 'message' => 'Query prep failed'];}
+	 return ['success' => false, 'message' => 'Query prep failed'];}
 
 	 $stmt->bind_param("ss", $username, $game_name);
 	$stmt->execute();
@@ -264,39 +264,39 @@ function deleteReview($username, $game_name){
 
 //watchlist for user
 function addToWatchlist($username, $game_id, $game_name){
-        $mysqli = new mysqli("localhost" "authuser", "StrongPassword123!", "testdb");
+        $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
           if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
 
-	try{$stmt = $mysqli->prepare("INSERT INTO watchlist (username, game_id, game_name, last_updated) VALUES (?, ?, ?, NOW()");
+	try{$stmt = $mysqli->prepare("INSERT INTO watchlist (username, game_id, game_name, last_updated) VALUES (?, ?, ?, NOW())");
 	 if(!$stmt){$mysqli->close();
 	 return['success'=> false, 'message'=> 'Query prep failed'];}
 
 
 	$stmt->bind_param("sis", $username, $game_id, $game_name);
 	$stmt->execute();
-	$stmt->close()
+	$stmt->close();
 	$mysqli->close();
 	return['success'=> true, 'message'=> 'The game is now in your watchlist'];
 
 	}catch (mysqli_sql_exception $e){
 	 if(str_contains($e->getMessage(), 'Duplicate entry')){return ['success'=> false, 'message'=> 'Game is already in your watchlist'];}
-	return['success'=> false, 'nessage'=> 'Error adding to watchlist: ' . $e->getMessage()];}
+	return['success'=> false, 'message'=> 'Error adding to watchlist: ' . $e->getMessage()];}
 }
 
 
 function getWatchlist($username){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
-	 if($mysqli->connect_errno) return ['success'=> false, 'message'=> 'DB connection failed']
+	 if($mysqli->connect_errno) return ['success'=> false, 'message'=> 'DB connection failed'];
 
-	$stmt= $mysqli->prepare("SELECT game_name game_id last_updated FROM watchlist WHERE username=? ORDER BY last_updated DESC");
+	$stmt= $mysqli->prepare("SELECT game_name, game_id, last_updated FROM watchlist WHERE username=? ORDER BY last_updated DESC");
 	 if(!$stmt){$mysqli->close();
         return ['success'=> false, 'message'=> 'Query prep failed'];}
 
 	$stmt->bind_param("s", $username);
 	 $stmt->execute();
-	$result= $stmt->getresult();
+	$result= $stmt->get_result();
 	$games=[];
-	while($row = $result->fetch_assoc(); $games[]= $row;
+	while($row = $result->fetch_assoc()){ $games[]= $row;}
 
 	$stmt->close();
 	$mysqli->close();
@@ -327,6 +327,8 @@ function requestProcessor($request) {
 
 		case'get_notifications':
 		 return getNotifications($request['username']);
+		case 'mark_notification_read':
+		 return markNotificationRead($request['notification_id']);
 
 		case'get_details':
 		 return getGameDetails($request['game_id']);
