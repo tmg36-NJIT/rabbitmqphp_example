@@ -108,4 +108,84 @@ button:hover {
 	box-shadow: 0 0 10px rgba(79,163,255,.45);
 	transform: scale(1.01);
 }
+
+/*Game Card Styling*/
+.results-grid {
+	display: grid;
+	gap: 22px;
+	grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+	margin-top: 26px;
+}
+
+.game-card {
+	position: relative;
+	background: #1a1d24;
+	border-radius: 12px;
+	padding: 12px;
+	box-shadow: 0 0 12px rgba(0,0,0,.28);
+	transition: transform .18s ease, box-shadow .18s ease;
+	animation: fadeUp .4s ease forwards;
+}
+
+.game-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 0 18px rgba(79,163,255,.35);
+}
+
+.game-card img {
+	width: 100%;
+	height: 150px;
+	object-fit: cover;
+	border-radius: 9px;
+	display: block;
+	transition: transform .3s ease;
+}
+
+.game-card:hover img {
+	transform: scale(1.03);
+}
+
+.game-card::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 10px;
+	background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0));
+	pointer-events: none;
+}
+
+.game-card:hover::after {
+	content: "Click to learn more";
+	position: absolute;
+	botton: 10px;
+	left: 10px;
+	font-side: .8rem;
+	color: #4fa3ff;
+	background: rgba(0,0,0,.6);
+	padding: 3px 6px;
+	border-radius: 5px;
+	opacity: .9;
+}
+
+.game-card h3 {
+	margin: 10px 0 6px;
+	font-size: 1rem;
+	color: #fff;
+	line-height: 1.2;
+}
+
+.game-info {
+	font-size: .88rem;
+	color: #b5bac2;
+}
+
+.review-card {
+	border: 1px solid #2a2f38;
+	border-radius: 6px;
+	background: #15171c;
+	padding: 6px;
+	margin-top: 5px;
+	color: #ddd;
+}
+
 </style>
