@@ -1,4 +1,8 @@
 <?php
+require '/var/www/html/vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 date_default_timezone_set('UTC');
@@ -27,7 +31,7 @@ if (!$result){ file_put_contents($logFile, "[$time] Query failed: " . $conn->err
 
 
 $userChanges= [];
- while ($row= $result->fetch_assoc(){
+ while ($row= $result->fetch_assoc()){
 	$gameName= urlencode($row['game_name']);
 	 $changes= [];
 	$newReleaseDetected= false;
