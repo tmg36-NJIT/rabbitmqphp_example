@@ -34,5 +34,43 @@ $userChanges= [];
 	$patchUpdateDetected= false;
 	$genreString= "";
 
+	$rawgResponse= @file_get_contents("$rawgUrl&search=$gameName");
+	$currentRelease= null;
+	$currentUpdated= null;
+	$currentVersion= null;
+	
+	//rawg for game data
+	if($rawgResponse!== FALSE){$data= json_decode($rawgResponse, true);
+	$game= $data['results'][0] ?? null;
 
+	 if($game){
+	$currentRelease= $game['released'] ?? null;
+	$currentUpdated= $game['updated'] ?? null;
+	$genres= array_map(fn($g) => $g['name'], $game['genres'] ?? []);
+	$genreString= implode(', ', $genres);
+
+	//new game
+	 if(($row['last_release_date'] === null || $row['last_release_date'] === '') && $currentRelease){ $changes[] = "New game has released! Release date: $currentRelease; Genres: $genreString";
+	$newReleaseDetected = true;}
+	//patches
+	 if($row['last_updated'] != $currentUpdated && $currentUpdated){$patchUpdateDetected= true;
+	$changes[]= "New patch is available! Updated on $currentUpdated" . ($currentVersion ? "Version: $currentVersion" : "");
+	 }
+	 }
+	}
+
+	//cheapshark for price data
+	$cheapResponse= @file_get_contents($cheapsharkUrl . $gameName);
+	$currentPrice= null;
+
+	if($cheapResponse!== FALSE){ $priceData= json_decode($cheapResponse, true);
+	  if(!empty($priceData[0]['cheapest'])){ $currentPrice= floatval($priceData[0]['cheapest']);
+	  if($row['last_known_price'] !== null && $currentPrice < floatval($row['last_known_price'])){ $changes[]= "Price has dropped from $".$row['last_known_price']." to $$currentPrice!";
+	   } elseif($row['last_known_price'] === null){$changes[] = "The current price is $$currentPrice";}
+	 }
+	}
+
+
+
+}
 ?>
