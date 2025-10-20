@@ -94,8 +94,37 @@ $userChanges= [];
 	//avoding api rate limits
 	usleep(300000);
 
-
-
-
 }
+
+//send email
+foreach($userChanges as $username=> $games){
+	//get usr  email
+	$emailQuery= "SELECT email FROM users WHERE username='$username' LIMIT 1";
+	$emailResult= $conn->query($emailQuery);
+	$emailRow = $emailResult ? $emailResult->fetch_assoc() : null;
+	$email = $emailRow['email'] ?? null;
+
+	if(!$email){ file_put_contents($logFile, "[$time] No email for $username — notifications saved only\n", FILE_APPEND);
+	 continue;}
+
+	$bodyLines= [];
+	foreach($games as $g){
+	 $bodyLines[] = "Game: {$g['game_name']}";
+	$bodyLines[]= "Release Date: " . ($g['release_date'] ?? "Unknown");
+	$bodyLines[] = "Genres: " . ($g['genres'] ?: "Unknown");
+	$bodyLines[]= "Current Price: " . ($g['price'] !== null ? "$".$g['price'] : "Unknown");
+	$bodyLines[]= "Changes Detected:";
+
+	 foreach($g['changes'] as $c){ $bodyLines[] = "- $c";}
+	$bodyLines[]= "";}
+
+	$subject = "Updates for Your Watchlist";
+	$body= "Hello $username,\n\n" . implode("\n", $bodyLines) . "\n— Game Tracker Bot\n";
+
+
+
+
+	
+}
+
 ?>
