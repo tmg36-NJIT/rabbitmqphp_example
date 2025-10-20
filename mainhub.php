@@ -14,7 +14,9 @@ if (!isset($_SESSION['username'])) {
 
 $username = $_SESSION['username'];
 $email = $_SESSION['email'] ?? '';
-$showEmailPrompt = false;
+
+$shouldAskForEmail = false; //i changed ths too
+
 if (empty($email)) {
     try {
  $client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
@@ -22,6 +24,7 @@ if (empty($email)) {
     "type" => "check_email",
     "username" => $username
  ]);
+
  if (isset($response['has_email']) && $response['has_email'] === false) {
 $showEmailPrompt = true;
 } elseif (!empty($response['email'])) {
@@ -32,20 +35,19 @@ $_SESSION['email'] = $response['email'];
     }
 }
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
- <link rel="stylesheet" href="style.css">
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <title>MATS: GameHub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
- <!-- HEADER: Title, User, Logout, Notification Bell -->
+ <!-- Title, User, Logout, Notification Bell -->
 <header>
   <h1>
-<a href="matshub.php" style="text-decoration:none; color:inherit;">  MATS: GameHub  </a>
+<a href="mainhub.php" style="text-decoration:none; color:inherit;">  MATS: GameHub  </a>
   </h1>
   <div class="user-tag">Welcome, <?= htmlspecialchars($username) ?>!</div>
   <form action="logout.php" method="post" style="display:inline;">
@@ -54,9 +56,8 @@ $_SESSION['email'] = $response['email'];
 <footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
 
 <main>
- <!-  Deliverable 1: Browse/Search (HTML + JS together) --> //going to try to sort into this chronological format for delivs. (not gonna be perfect)
+ <! -- Deliverable 1: Search feature w/ details/browse  -->  //going to try to sort into this chronological format for delivs. (not gonna be perfect)
 <section id="deliverable-1">
-<!-- UI stuff  -->
 <div style="text-align:center; margin-bottom:20px;">
 <div style="display:inline-flex; align-items:center; gap:8px;">
 <input id="gameSearch" type="text"
@@ -80,65 +81,139 @@ const noteEl = document.getElementById('note');
 const spinnerEl = document.getElementById('loadingSpinner');
 const placeholder = 'https://via.placeholder.com/250x150?text=No+Image';
 
- // Helpers (gon use these for other delivs. too (kept global)
-function clearUI() { resultsEl.innerHTML = ''; noteEl.textContent = ''; }
-function showNote(msg, isErr=false) { noteEl.textContent = msg; noteEl.className = 'center-note' + (isErr ? ' error' : ''); }
+function resetGrid() {   //i renamed function
+        resultsEl.innerHTML = '';
+        noteEl.textContent = '';
+}
+      function say(msg, isErr = false) {
+        noteEl.textContent = msg;
+        noteEl.className = 'center-note' + (isErr ? ' error' : '');
+      }
 document.getElementById('btnSearch').addEventListener('click', fetchGames);
 
-// For D1 (Deliverable 1) - function for search
 async function fetchGames() {
 const q = document.getElementById('gameSearch').value.trim();
-clearUI();
-   if (!q) return showNote('Enter a game name.');
-  spinnerEl.style.display = 'block';
-  showNote('Loading…');
-    try {
-  const res = await fetch(`rabbit_search.php?genre=${encodeURIComponent(q)}`);
-  const data = await res.json();
- console.log("DEBUG:", data);
-  renderGames(mapToCards(data.results || []));
-      } catch (e) {
-    console.error(e);
-    showNote('Error fetching data.', true);
-     spinnerEl.style.display = 'none';
+        resetGrid();
+        if (!q) {
+        say('Enter a game name.');
+        return;
+        }
+        spinnerEl.style.display = 'block';
+        say('Loading...');
+   try {
+          const res  = await fetch(`rabbit_search.php?genre=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        const list = Array.isArray(data?.results) ? data.results : [];
+          drawCards(toCards(list));
+        } catch (err) {
+          console.error(err);
+          say('Error fetching data.', true);
+          spinnerEl.style.display = 'none';
+        }
       }
-    }
 
- // Also D1: fop mappiong api cards
-function mapToCards(items) {
-if (!Array.isArray(items)) return [];
-return items.map(g => ({id: g.id ?? 0, name: g.name ?? 'Unknown',
-        rating: g.rating ?? 'N/A',released: g.released ?? 'N/A',
-image: g.background_image ?? g.image ?? placeholder
-      }));
-    }
-// D1 too --> for rendring the czards
-function renderGames(games) {
-resultsEl.innerHTML = '';
-noteEl.textContent = '';
-resultsEl.classList.remove('show');
-void resultsEl.offsetWidth;
-resultsEl.classList.add('show');
+function toCards(items) { //used sum resources for formatting this 
+          return items.map(g => ({
+          id:        g.id ?? 0,
+          name:      g.name ?? 'Unknown',
+          rating:    g.rating ?? 'N/A',
+          released:  g.released ?? 'N/A',
+          image:     g.background_image ?? g.image ?? placeholder
+        }));
+      } 
 
-if (!games.length) return showNote('No results found.');
+function drawCards(games) {
+        resultsEl.innerHTML = '';
+        noteEl.textContent  = '';
+        resultsEl.classList.remove('show');
+        void resultsEl.offsetWidth;
+        resultsEl.classList.add('show');
 
+        if (!games.length) {
+          say('No results found.');
+          spinnerEl.style.display = 'none';
+          return;
+        }
 for (const g of games) {
-  const reason = `Because you like ${window.answers?.genre || 'varied genres'} games on ${window.answers?.platform || 'your chosen platform'}.`;
-    const card = document.createElement('div');
-  card.className = 'game-card';
+          const card = document.createElement('div');
+          card.className = 'game-card';
 
-//add to my list button + view details button
- card.innerHTML = `
- <img src="${g.image}" alt="${g.name}">
- <h3>${g.name}</h3>
-<div class="game-info"> ${g.rating}<br> ${g.released}</div>
-<p style="font-size:0.8rem;color:#9aa0aa;margin-top:6px;">${reason}</p>
-<button style="margin-top:8px;" onclick="viewDetails(${g.id})"> View Details</button>
-<button style="margin-top:8px;" onclick="rateGame('${g.name.replace(/'/g,"\\'")}')"> Rate / Review</button>
-<button style="margin-top:8px;" onclick="addToMyList(${g.id}, '${g.name.replace(/'/g,"\\'")}')">➕ Add to My List</button>
-<div id="reviews-${g.name.replace(/\s+/g, '_')}" style="margin-top:10px;font-size:0.85rem;color:#ccc;"></div>
-     `; resultsEl.appendChild(card);  //used specific online presets for formatting
-// so far updated structure/formatting/styling + added tweaks like the email setup, etc.
-// Going to implement my old functions like fetchReccomendations, etc a lil later since im trynna do a organize it by deliverable
+          const reason = `Suggested based on your picks.`;
+
+          card.innerHTML = `
+            <img src="${g.image}" alt="${g.name}">
+            <h3>${g.name}</h3>
+            <div class="game-info">⭐ ${g.rating}<br>🗓️ ${g.released}</div>
+            <p style="font-size:.86rem; color:#9aa0aa; margin-top:6px;">${reason}</p>
+
+            <button class="btn small" style="margin-top:8px;" onclick="viewDetails(${g.id})">View Details</button>
+            <button class="btn small" style="margin-top:8px;" onclick="rateGame('${g.name.replace(/'/g,"\\'")}')">Rate / Review</button>
+            <button class="btn small" style="margin-top:8px;" onclick="addToMyList(${g.id}, '${g.name.replace(/'/g,"\\'")}')">Add to My List</button>
+
+            <div id="reviews-${g.name.replace(/\s+/g, '_')}" style="margin-top:10px; font-size:.9rem; color:#cfd6df;"></div>
+          `;
+          resultsEl.appendChild(card);
+
+          // for loading  any reviews already saved for this title
+          loadReviews(g.name);
+        }
+        spinnerEl.style.display = 'none';
+      }
+async function viewDetails(gameId) {
+      try {
+      spinnerEl.style.display = 'block';
+      say('Loading details...');
+          const res = await fetch("rabbit_search.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "get_details", game_id: gameId }) // i first tested w/ game name but it failed, so switching to game_id since it get return api content smoother
+          });
+          const data = await res.json();
+          spinnerEl.style.display = 'none';
+
+       if (!data?.success) {
+            say(data?.message || "No details found.", true);
+            return;
+          }
+
+   const g = data.results;
+   const platforms = g.platforms ? g.platforms.map(p => p.platform.name).join(', ') : 'Unknown';
+   const requirements = g.platforms && g.platforms[0]?.requirements?.minimum
+   ? g.platforms[0].requirements.minimum
+   : 'N/A';
+
+//gon add the modal for details later
+</script> 
+</section>
+
+<! -- Deliverable 2: Review + Rating System  --> 
+// same w/ this (from below)
+
+
+
+
+
+<! -- Deliverable 3: Reccomendation System  -->
+//alrdy have base code from matshub.php, gon upload extended ver. here
+
+
+
+
+
+<!-- Deliverable 4: Watchlist System -->
+
+
+
+
+
+
+<! -- Deliverable 5: Notification System
+
+
+
+
+
+
+<! -- Deliverable 6: Messsage Board System -->
 
 
