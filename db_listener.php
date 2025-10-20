@@ -117,6 +117,8 @@ function checkUserEmail($username){
 
 
 
+
+
 //notifications
 function getNotifications($username){
 	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
@@ -133,13 +135,33 @@ function getNotifications($username){
 	while ($row = $result->fetch_assoc()) $notifications[] = $row;
 
 	$stmt->close();
-	$mysqli->close()
+	$mysqli->close();
 	return ['success'=> true, 'notifications'=> $notifications];
 }
 
 
 
+function markNotificationRead($notification_id) {
+	$mysqli- new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	 if($mysqli->connect_errno) return ['success'=> false, 'message' => 'DB connection failed'];
+
+	$stmt= $mysqli->prepare("UPDATE notifications SET is_read=1 WHERE id=?");
+	 if(!$stmt){ $mysqli->close();
+	return ['success'=> false, 'message'=> 'Query prep failed'];}
+
+	$stmt->bind_param("i", $notification_id;
+	$stmt->execute();
+	$affected= $stmt->affected_rows;
+
+	$stmt->close();
+	$mysqli->close();
+	return ['success'=> $affected > 0, 'message' => $affected > 0 ? 'Notification marked read' : 'Notification not found'];
+
+}
+
 //end notifications
+
+
 
 
 //fetch api data
@@ -163,7 +185,7 @@ function getGameRecommendations($query = null) {
 	if ($query){ $baseUrl .= '&search=' . urlencode($query);}
 	
 	$response= @file_get_contents($baseUrl);
-	if($response==false){return ['success'  => false, 'message' => 'unable to reach the rawg api'];}
+	if($response==false){return ['success'  => false, 'message' => 'Unable to reach the rawg api'];}
 	$data= json_decode($response, true);
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
