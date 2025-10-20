@@ -270,4 +270,24 @@ footer {
 footer:hover {
 	color: #4fa3ff;
 }
+
+/*Animation Styling*/
+@keyframes fadePageIn {
+	to { opacity: 1; }
+}
+
+@keyframes fadeUp {
+	from {opacity: 0; transform: translateY(10px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+	from { transform: scale(.95); opacity: 0; }
+	to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shimmer {
+	0% { background-position: 0% 50%; }
+	100% { background-position: 200% 50%; }
+}
 </style>
