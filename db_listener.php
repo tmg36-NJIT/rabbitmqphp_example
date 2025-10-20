@@ -119,17 +119,27 @@ function checkUserEmail($username){
 
 //notifications
 function getNotifications($username){
-	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno) return['success' => false, 'message'=> 'DB connection failed'];
 
+	$stmt = $mysqli->prepare("SELECT id message is_read created_at FROM notifications WHERE username=? ORDER BY created_at DESC");
+	if(!$stmt){ $mysqli->close();
+	return ['success' => false, 'message' => 'Query prep failed'];}
+	$stmt->bind_param("s", $username);
+	$stmt->execute();
+	$result = $stmt->get_result();
+
+	$notifications = [];
+	while ($row = $result->fetch_assoc()) $notifications[] = $row;
+
+	$stmt->close();
+	$mysqli->close()
+	return ['success'=> true, 'notifications'=> $notifications];
+}
 
 
 
-
-
-
-
-
+//end notifications
 
 
 //fetch api data
@@ -158,6 +168,9 @@ function getGameRecommendations($query = null) {
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
 
+//end fetch
+
+//cache user data
 function saveUserSearch($username, $query){
 	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return false; };
@@ -171,7 +184,7 @@ function saveUserSearch($username, $query){
 	$stmt->close();
 	$mysqli->close();
 	return true;}
-//end fetch
+//end save data
 
 
 //user reviews
@@ -284,12 +297,18 @@ function requestProcessor($request) {
 		 return doLoginDB($request['username'], $request['password']);
 		case 'register':
 		 return doRegisterDB($request['username'], $request['password']);
+
 		case'update_email':
 		  return updateUserEmail($request['username'], $request['email']);
 		case 'check_email':
 		   return checkUserEmail($request['username']);
+
+		case'get_notifications':
+		 return getNotifications($request['username']);
+
 		case'get_details':
 		 return getGameDetails($request['game_id']);
+
 		case 'get_recommendations':
 		 $query= $request['query'] ??null;
 		$username= $request['username']?? 'Guest';
@@ -305,10 +324,12 @@ function requestProcessor($request) {
 		return getReviews($request['game_name']);
 		case'delete_review':
 		 return deleteReview($request['username'], $request['game_name']);
+
 		case 'add_watchlist':
 		 return addToWatchlist($request['username'], $request['game_id'], $request['game_name']);
 		case 'get_watchlist':
 		 return getWatchlist($request['username']);
+
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
 }
