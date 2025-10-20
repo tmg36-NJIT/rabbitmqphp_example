@@ -72,5 +72,30 @@ $userChanges= [];
 
 
 
+	//recording changes for user
+	if(!empty($changes)){ $username= $row['username'];
+	 if(!isset($userChanges[$username])){$userChanges[$username]= [];}
+	$userChanges[$username][]= ['game_name' => $row['game_name'], 'release_date'=> $currentRelease, 'genres'=> $genreString, 'price'=> $currentPrice, 
+	 'changes'=> $changes, 'new_release'=> $newReleaseDetected, 'patch_update'=> $patchUpdateDetected];
+
+
+	//adding notifications into the notification table
+	 foreach($changes as $c){ if(trim($c)=== '') continue;
+	$msg= $row['game_name'] . ' — ' . $c;
+	$stmt= $conn->prepare("INSERT INTO notifications (username, message, is_read) VALUES (?, ?, 0)");
+	$stmt->bind_param("ss", $username, $msg);
+	$stmt->execute();
+	$stmt->close();}
+
+        //update watchlist
+	$conn->query("UPDATE watchlist SET last_release_date = " . ($currentRelease ? "'$currentRelease'" : "NULL") . ",last_updated = " . ($currentUpdated ? "'$currentUpdated'" : "NULL") . 
+	 ", last_known_price = " . ($currentPrice ? "'$currentPrice'" : "NULL") . ", last_checked = NOW() WHERE id = {$row['id']}");
+	} else{$conn->query("UPDATE watchlist SET last_checked = NOW() WHERE id = {$row['id']}");}
+	//avoding api rate limits
+	usleep(300000);
+
+
+
+
 }
 ?>
