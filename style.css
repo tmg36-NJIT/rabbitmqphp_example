@@ -244,4 +244,30 @@ button:hover {
 	color: #4fa3ff;
 	transform: scale(1.1);
 }
+
+/*Other Text Styling*/
+.center-note {
+	text-align: center;
+	margin-top: 18px;
+	color: #c9cdd4;
+}
+
+.error {
+	color: #ff6363;
+}
+
+/*Footer Styling*/
+footer {
+	text-align: center;
+	color: #768093;
+	font-size: .85rem;
+	padding: 26px 0;
+	border-top: 1px solid #1c2028;
+	margin-top: 40px;
+	transition: color .3s ease;
+}
+
+footer:hover {
+	color: #4fa3ff;
+}
 </style>
