@@ -122,9 +122,31 @@ foreach($userChanges as $username=> $games){
 	$body= "Hello $username,\n\n" . implode("\n", $bodyLines) . "\n— Game Tracker Bot\n";
 
 
+	$mail= new PHPMailer(true);
+	try{ 
+	$mail->isSMTP();
+	$mail->Host        = 'smtp.gmail.com';
+	$mail->SMTPAuth    = true;
+	$mail->Username    = 'jrmihad@gmail.com';
+	$mail->Password    = 'ibxzppsksyitaykl';
+	$mail->SMTPSecure  = 'tls';
+	$mail->Port        = 587;
 
+	$mail->setFrom('jrmihad@gmail.com', 'Game Tracker Bot');
+	$mail->addAddress($email, $username);
 
-	
+	$mail->isHTML(false);
+	$mail->Subject = $subject;
+	$mail->Body    = $body;
+
+        $mail->send();
+        file_put_contents($logFile, "[$time] Email has been sent to $email for user $username\n", FILE_APPEND);
+    }catch (Exception $e) {file_put_contents($logFile, "[$time] Failed to send email to $email. Error: {$mail->ErrorInfo}\n", FILE_APPEND);}
+
 }
+
+
+$conn->close();
+file_put_contents($logFile, "[$time] Watchlist cron (RAWG + CheapShark) completed with notifications.\n", FILE_APPEND);
 
 ?>
