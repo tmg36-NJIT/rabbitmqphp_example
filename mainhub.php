@@ -255,7 +255,7 @@ document.body.insertAdjacentHTML('beforeend', html);
           <option value="5">5 - Excellent</option>
         </select>
         <textarea id="reviewText" placeholder="Keep it helpful and short." style="width:100%; height:90px; border-radius:6px; background:#151a21; color:#e9edf1; border:1px solid #2b3341; padding:8px;"></textarea>
-        <div class "modal-options" style="margin-top:12px; display:flex; gap:10px; justify-content:flex-end;">
+        <div class= "modal-options" style="margin-top:12px; display:flex; gap:10px; justify-content:flex-end;">
           <button class="btn small" onclick="closeReviewModal()">Cancel</button>
           <button class="btn small" onclick="submitReview()">Submit</button>
         </div>
@@ -431,8 +431,8 @@ document.getElementById('reviewNotice').style.display = 'none';
 </section>
 
 <!-- Deliverable 3: Recommendation System -->
-<!-- alrdy have base code from matshub.php, gon upload extended ver. here -->
-<!-- currently working on implementing recs based on cache data on top of filtering, will integrate after deliv. 4-5 -->
+
+<!-- not confirmed but may do 2 game rec options: based on filtering + user rating/reviews -->
 
  <section id="deliverable-3">
     <!-- The only button to start the flow -->
@@ -441,6 +441,27 @@ document.getElementById('reviewNotice').style.display = 'none';
     </div>
 </section>
 
+<!-- Surprise Me button -->
+<div style="text-align:center; margin-top:10px;">
+  <button id="surpriseMeBtn" class="cool-btn">Surprise me. I want a recommendation</button>
+</div>
+<script>
+async function fetchPersonalizedRecommendations() {
+resetGrid();
+spinnerEl.style.display = 'block';
+say('Looking for a personalized game juist for you...');
+try {
+const res = await fetch('rabbit_search.php', {
+method: 'POST',
+headers: {'Content-Type':'application/json'},
+body: JSON.stringify({
+type: 'personalized_recommendations',
+username: "<?= htmlspecialchars($username) ?>"
+      })
+    });
+const data = await res.json();
+spinnerEl.style.display = 'none';
+</script>
 
 <!-- Deliverable 4: Watchlist System -->
 <section id="deliverable-4">
@@ -481,7 +502,8 @@ document.getElementById('reviewNotice').style.display = 'none';
   const res = await fetch("rabbit_search.php", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ type: "get_watchlist", username })
+  body: JSON.stringify({
+ type: "get_watchlist", username })
           });
   const data = await res.json();
   if (!data?.success || !Array.isArray(data.results) || !data.results.length) {
@@ -489,12 +511,16 @@ document.getElementById('reviewNotice').style.display = 'none';
             return;
           }
 
- const html = data.results.map(g => 
- <div style="background:#1e222b; padding:10px; margin:10px; border-radius:6px;">
+
+const html = data.results.map(g => `
+<div style="background:#1e222b; padding:10px; margin:10px; border-radius:6px;">
 <strong>${g.game_name}</strong><br>
-<small>Added on ${g.added_at || 'N/A'}</small>
-      </div>
-          `).join("");
+<small>Added on ${g.added_at || g.last_updated || 'N/A'}</small>
+</div>
+`).join('');
+
+
+
  const modal = `
  <div id="watchlistModal" class="modal show" onclick="if(event.target.id==='watchlistModal'){document.getElementById('watchlistModal').remove();}">
  <div class="modal-content" style="max-width:650px;">
@@ -587,14 +613,18 @@ console.error("loadNotifications error:", err);
 drawNotifs([]);
         }
       }
-//gona make some functions to render + update notifs, will add login later	
+//gona make some functions to render + update notifs, will add logic* later	
 
 function drawNotifs(list) {
 }
 function updateBadge(list) {
 }
+
+
 </script>
 </section>
+
+
 
 
 <!-- Deliverable 6: Message Board System -->
