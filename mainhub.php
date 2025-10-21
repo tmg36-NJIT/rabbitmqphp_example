@@ -67,7 +67,9 @@ $_SESSION['email'] = $response['email'];
   id="gameSearch"
   type="text"
   placeholder="Search for a game (e.g. Elden Ring)"
-/>
+style="width:700px; max-width:90%; background:#1a1d24; color:#fff;
+             border:1px solid #2a2f38; border-radius:8px; padding:10px;" />
+
 <button id="btnSearch" type="button">Search</button>
 </div>
 </div>
@@ -93,6 +95,10 @@ const resultsEl = document.getElementById('results');
 const noteEl = document.getElementById('note');
 const spinnerEl = document.getElementById('loadingSpinner');
 const placeholder = 'https://via.placeholder.com/250x150?text=No+Image';
+
+
+
+
 
 function resetGrid() {   //i renamed function
         resultsEl.innerHTML = '';
@@ -249,12 +255,13 @@ document.body.insertAdjacentHTML('beforeend', html);
           <option value="5">5 - Excellent</option>
         </select>
         <textarea id="reviewText" placeholder="Keep it helpful and short." style="width:100%; height:90px; border-radius:6px; background:#151a21; color:#e9edf1; border:1px solid #2b3341; padding:8px;"></textarea>
-        <div style="margin-top:12px; display:flex; gap:10px; justify-content:flex-end;">
+        <div class "modal-options" style="margin-top:12px; display:flex; gap:10px; justify-content:flex-end;">
           <button class="btn small" onclick="closeReviewModal()">Cancel</button>
           <button class="btn small" onclick="submitReview()">Submit</button>
         </div>
       </div>
     </div>
+
  <!-- Success -->
  <div id="successPopup" class="modal">
  <div class="modal-content" style="text-align:center;">
@@ -532,23 +539,66 @@ document.getElementById("emailPrompt").classList.remove("show");
       }
 </script>
 </section>
-<!-- Deliverable 5: Notification System -->
 
 <section id="deliverable-5">
 <script> //some setup vars, no funct. yet
-const notif_user = null;
-const notifbell=null;
-const notifpanel=null;
-const noiflist  = null;
-const notifempty=null;
 
-let notifcache=[];
+const NOTIF_USERNAME = "<?= htmlspecialchars($username) ?>";
+const notifBellBtn= document.getElementById('openNotifBtn')
+const notifListEl= document.getElementById('notifList');
+const notifBadge = document.getElementById('notifBadge');
+const notifEmpty= document.getElementById('notifEmpty');
+const markAllBtn = document.getElementById('markAllBtn');
+const notifPanel = document.getElementById('notifPanel');
+
+let notifCache = [];
+
+notifBellBtn.addEventListener('click', async () => {
+const isHidden = notifPanel.style.display === 'none' || !notifPanel.style.display;
+
+if (isHidden) {
+await loadNotifs();
+notifPanel.style.display = 'block';
+ } 
+else
+ {
+notifPanel.style.display = 'none';
+ }
+      });
+
+async function loadNotifs() {
+ try {
+const res  = await fetch("rabbit_search.php", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({ type: "get_notifications", username: NOTIF_USERNAME })
+          });
+const data = await res.json();
+if (!data?.success) {
+drawNotifs([]);
+return;
+          }
+notifCache = Array.isArray(data.notifications) ? data.notifications : [];
+drawNotifs(notifCache);
+updateBadge(notifCache);
+        } 
+catch (err) {
+console.error("loadNotifications error:", err);
+drawNotifs([]);
+        }
+      }
+//gona make some functions to render + update notifs, will add login later	
+
+function drawNotifs(list) {
+}
+function updateBadge(list) {
+}
 </script>
 </section>
 
 
 <!-- Deliverable 6: Message Board System -->
-
+<script> //looking into existing models atm
 </main>
 <footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
 </body>
