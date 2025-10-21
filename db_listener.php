@@ -190,6 +190,25 @@ function getGameRecommendations($query = null) {
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
 
+function getPersonalizedRecommendations($username){
+	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	if($mysqli->connect_errno) return['success'=> false,'message'=> 'DB connection failed'];
+
+	$stmt= $mysqli->preapare("SELECT game_name, rating FROM reviews WHERE username =?');
+	 if(!$stmt){$mysqli->close(); 
+	return['success'=> false, 'message' =>'Query prep had failed'];}
+	$stmt->bind_param("s", $username);
+	$stmt->exdecute();
+	$result = $stmt->get_result();
+
+	$liked[]
+
+
+
+
+}
+
+
 //end fetch
 
 //cache user data
