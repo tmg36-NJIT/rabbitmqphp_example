@@ -459,10 +459,32 @@ type: 'personalized_recommendations',
 username: "<?= htmlspecialchars($username) ?>"
       })
     });
+
 const data = await res.json();
 spinnerEl.style.display = 'none';
-</script>
 
+if (!data || data.success !== true) {
+return say(data?.message || 'Looks lke no personalized results found.', true);
+}
+
+if (data.note) {
+  say(data.note, false);
+} else {
+  noteEl.textContent = '';
+}
+const raw   = Array.isArray(data.results) ? dhata.results.slice(0, 5) : [];
+const cards = toCards(raw);
+if (!cards.length) return say('No result looks to be found.');
+drawCards(cards);
+} catch (e) {
+console.error(e);
+spinnerEl.style.display = 'none';
+say('Error fetching personalized recommendations.', true)
+}
+document.getElementById('surpriseMeBtn').addEventListener('click', fetchPersonalizedRecommendations);
+
+</script>
+</section>
 <!-- Deliverable 4: Watchlist System -->
 <section id="deliverable-4">
 <div style="text-align:center; margin-top:10px;">
