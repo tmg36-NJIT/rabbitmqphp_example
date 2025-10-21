@@ -472,14 +472,15 @@ if (data.note) {
 } else {
   noteEl.textContent = '';
 }
-const raw   = Array.isArray(data.results) ? dhata.results.slice(0, 5) : [];
+const raw   = Array.isArray(data.results) ? data.results.slice(0, 5) : [];
 const cards = toCards(raw);
 if (!cards.length) return say('No result looks to be found.');
 drawCards(cards);
 } catch (e) {
 console.error(e);
 spinnerEl.style.display = 'none';
-say('Error fetching personalized recommendations.', true)
+say('Error fetching personalized recommendations.', true);
+}
 }
 document.getElementById('surpriseMeBtn').addEventListener('click', fetchPersonalizedRecommendations);
 
