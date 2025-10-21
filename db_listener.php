@@ -224,6 +224,31 @@ function getPersonalizedRecommendations($username){
 	$data = json_decode($json, true);
 	return ['success' => true, 'message' => 'can"t find reviews/you don"t have any. lock in more reviews to get picks', 'results' => ($data['results'] ?? []);}
 
+	$genreWeights = [];
+	$platformWeights = [];
+	$dislikedGenres= [];
+	$dislikedPlatforms= [];
+	$seenGameIds= [];
+	$seedNames= array_merge($liked, $liked_soft, $disliked);
+
+	foreach($seedName as $name){
+	$q= $urlencode($name);
+	$skibidiUrl = "https://api.rawg.io/api/games?key=$apiKey&search=$q&page_size=1";
+	$sresp= @file_get_contents($skibidiUrl);
+	 if(!$stesp) continues;
+	$sdata = json_decode($sresp, true);
+	$hit = $sdata['results'][0] ?? null;
+	 if(!$hit || empty($hit['id'])) continue;
+	$id = $hit['id'];
+
+	$cameraUrl ="https://api.rawg.io/api/games/$id?key=$apiKey";
+	$dresp= @file_get_contents($cameraUrl);
+	 if(!$dresp) continue;
+	$det= json_decode($dresp, true);
+
+	$genres = is_array($det['genres'] ?? null) ? $det['genres'] : [];
+	$plats= is_array($det['platforms'] ?? null) ? $det['platforms'] : [];
+
 	
 
 }
