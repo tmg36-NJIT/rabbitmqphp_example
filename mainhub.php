@@ -318,13 +318,13 @@ closeReviewModal();
 loadReviews(currentGame);
 } else if (String(data?.message || '').includes("already rated")) {
 closeReviewModal();
-showNotice("You already ratd this game.");
+showNotice("You already rated this game.");
  } else {
    showErrorPopup(data?.message || "Error submitting review.");
           }
   } catch (err) {
 console.error("submitReview error:", err);
-showErrorPopup("Eror submiting review. Please try again.");
+showErrorPopup("Error submiting review. Please try again.");
         }
       }
 
@@ -482,7 +482,7 @@ document.getElementById('reviewNotice').style.display = 'none';
             return;
           }
 
- const html = data.results.map(g => `
+ const html = data.results.map(g => 
  <div style="background:#1e222b; padding:10px; margin:10px; border-radius:6px;">
 <strong>${g.game_name}</strong><br>
 <small>Added on ${g.added_at || 'N/A'}</small>
@@ -506,14 +506,31 @@ showNotice("Error loading your list.");
       }
  document.getElementById("viewWatchlistBtn").addEventListener("click", fetchWatchlist);
    
-//still need to add html modal; will add soon
+// need to add email prompt modal
+
+<div id = "emailPrompt" class ="modal>
+<div class = "modal-content" style = "text-align: center; 
+
  </script>
   </section>
-
-
+<section id="email-prompt">
+<div id = "emailPrompt" class="modal">
+<div class="modal-content" style="text-align:center;">
+<button onclick="closeEmailModal()" style="position:absolute; top:10px; right:14px; background:none; border:none; color:#ccc; font-size:22px; cursor:pointer;">×</button>
+<h2>Add Your Email</h2>
+<p>Do you want to get  updates &  notifiations?</p>
+<input id="emailInput" type="email" placeholder="you@example.com"
+<script>
+function showEmailPrompt() {
+document.getElementById("emailPrompt").classList.add("show");
+      }
+function closeEmailModal() {
+document.getElementById("emailPrompt").classList.remove("show");
+      }
 
 
 <!-- Deliverable 5: Notification System -->
+
 <!-- Deliverable 6: Message Board System -->
 
 </main>
