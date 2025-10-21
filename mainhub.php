@@ -245,7 +245,7 @@ document.body.insertAdjacentHTML('beforeend', html);
 <section id="deliverable-2">
 <div id="reviewModal" class="modal">
 <div class="modal-content">
- <h2 id="modalGameTitle">Rate / Review</h2>
+ <h2 id="modalGameTitle"> Rate / Review</h2>
        <label for="ratingSelect" style="color:#e9edf1;">Rating</label>
         <select id="ratingSelect">
           <option value="1">1 - Overwhelmingly Negative</option>
@@ -266,7 +266,7 @@ document.body.insertAdjacentHTML('beforeend', html);
  <div id="successPopup" class="modal">
  <div class="modal-content" style="text-align:center;">
  <h2>Saved</h2>
- <p>Your review was saved.</p>
+ <p>Thank you. Your review has been published! </p>
 <button class="btn small" onclick="closePopup()">OK</button>
 </div>
 </div>
@@ -274,7 +274,7 @@ document.body.insertAdjacentHTML('beforeend', html);
 <div id="errorPopup" class="modal">
  <div class="modal-content" style="text-align:center;">
  <h2 style="color:#ff7171;">Error</h2>
- <p id="errorPopupMessage">Something went wrong.</p>
+ <p id="errorPopupMessage">Something went wrong. Please attempt again!</p>
  <button class="btn small" onclick="closeErrorPopup()">OK</button>
       </div>
     </div>
@@ -325,7 +325,7 @@ closeReviewModal();
 loadReviews(currentGame);
 } else if (String(data?.message || '').includes("already rated")) {
 closeReviewModal();
-showNotice("You already rated this game.");
+showNotice("Looks like you already rated this game!");
  } else {
    showErrorPopup(data?.message || "Error submitting review.");
           }
@@ -339,7 +339,7 @@ async function loadReviews(gameName) {
 const el = document.getElementById(`reviews-${gameName.replace(/\s+/g, '_')}`);
 
 if (!el) return;
-el.innerHTML = "<em>Loading reiews...</em>";
+el.innerHTML = "<em>Loading reviews..Just a moment.</em>";
 
 try {
 const res = await fetch("rabbit_search.php", {
@@ -377,11 +377,11 @@ body: JSON.stringify({ type: "delete_review", username: "<?= htmlspecialchars($u
 const out = await delRes.json();
 	
 if (out?.success) {
-showNotice("Your review was deleted.");
+showNotice("Your review has been successfully deleted.");
 loadReviews(game);
 }
  else {
-showNotice(out?.message || "Could not delete review.");
+showNotice(out?.message || "We could not delete review.");
 }
 } catch (e) {
 showNotice("Error deleting review.");
@@ -393,7 +393,7 @@ el.innerHTML = "<em>No reviews yet.</em>";
 }
 } catch (err) {
 console.error("loadReviews error:", err);
-el.innerHTML = "<em>Error loading reviews.</em>";
+el.innerHTML = "<em>Error loading your reviews.</em>";
 }
 }
 (function () {
@@ -541,7 +541,7 @@ showNotice("Error loading your list.");
    
 // need to add email prompt modal
 
-<div id = "emailPrompt" class ="modal>
+<div id = "emailPrompt" class ="modal">
 <div class = "modal-content" style = "text-align: center; 
 
  </script>
