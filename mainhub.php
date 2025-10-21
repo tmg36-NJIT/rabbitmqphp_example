@@ -520,6 +520,9 @@ showNotice("Error loading your list.");
 <h2>Add Your Email</h2>
 <p>Do you want to get  updates &  notifiations?</p>
 <input id="emailInput" type="email" placeholder="you@example.com"
+</div>
+</div>
+</div>
 <script>
 function showEmailPrompt() {
 document.getElementById("emailPrompt").classList.add("show");
@@ -527,9 +530,22 @@ document.getElementById("emailPrompt").classList.add("show");
 function closeEmailModal() {
 document.getElementById("emailPrompt").classList.remove("show");
       }
-
-
+</script>
+</section>
 <!-- Deliverable 5: Notification System -->
+
+<section id="deliverable-5">
+<script> //some setup vars, no funct. yet
+const notif_user = null;
+const notifbell=null;
+const notifpanel=null;
+const noiflist  = null;
+const notifempty=null;
+
+let notifcache=[];
+</script>
+</section>
+
 
 <!-- Deliverable 6: Message Board System -->
 
