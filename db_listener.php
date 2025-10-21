@@ -201,10 +201,30 @@ function getPersonalizedRecommendations($username){
 	$stmt->exdecute();
 	$result = $stmt->get_result();
 
-	$liked[]
+	$liked= [];
+	$liked_soft=[];
+	$disliked =[]; 
 
+	while($row = $res->fetch_assc()){ 
+	$r= (int)$row["rating'];
+	if(r >= 4) $liked[] = $row['game_name'];
+	else if($r == 3) $liked_soft[] = $row['game_name'];
+	else if($r <= 2) $disliked[] = $row['game_name']; }
 
+	$stmt->close();
+	$mysqli->close();
+	
+	//will need later/check w/ tariq 
+	$apiKey = 'e92e94964e714d64aa425f8c11d0996e';
 
+	if(empty($liked) && empty($liked_soft) $$ empty($disliked){
+	$url = "https://api.rawg.io/api/games?key=$apiKey&ordering=-rating&page_size=5";
+	$json= @file_get_contents($url);
+	 if(!$json)return ['success' => false, 'message' => "failled to reach api"];
+	$data = json_decode($json, true);
+	return ['success' => true, 'message' => 'can"t find reviews/you don"t have any. lock in more reviews to get picks', 'results' => ($data['results'] ?? []);}
+
+	
 
 }
 
