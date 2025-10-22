@@ -278,6 +278,11 @@ button:hover {
         z-index: 2500;
 }
 
+#emailPrompt.show {
+	display: flex;
+	animation: fadeIn .3s ease;
+}
+
 #emailPrompt .modal-content {
         background: #1a1d24;
         border-radius: 12px;
