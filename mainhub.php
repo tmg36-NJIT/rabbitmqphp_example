@@ -59,6 +59,7 @@ $_SESSION['email'] = $response['email'];
 <button id="openNotifBtn" type="button" title="Notifications">🔔</button>
 <span id="notifBadge"></span>
 </div>
+</header>
 
 <!-- Notifications Panel -->
 <div id="notifPanel">
@@ -68,8 +69,6 @@ $_SESSION['email'] = $response['email'];
 <div id="notifList"></div>
 <div id="notifEmpty">No notifications yet.</div>
 </div>
-</header>
-</header>
 <main>
 
 <!-- Deliverable 1: Search feature w/ details/browse -->
@@ -452,7 +451,6 @@ document.getElementById('reviewNotice').style.display = 'none';
     <div style="text-align:center; margin-top:10px;">
       <button id="startRecBtn" class="cool-btn">Recommend Me a Game</button>
     </div>
-</section>
 
 <!-- Surprise Me button -->
 <div style="text-align:center; margin-top:10px;">
@@ -462,7 +460,7 @@ document.getElementById('reviewNotice').style.display = 'none';
 async function fetchPersonalizedRecommendations() {
 resetGrid();
 spinnerEl.style.display = 'block';
-say('Looking for a personalized game juist for you...');
+say('Looking for a personalized game just for you...');
 try {
 const res = await fetch('rabbit_search.php', {
 method: 'POST',
@@ -477,7 +475,7 @@ const data = await res.json();
 spinnerEl.style.display = 'none';
 
 if (!data || data.success !== true) {
-return say(data?.message || 'Looks lke no personalized results found.', true);
+return say(data?.message || 'Looks like no personalized results found.', true);
 }
 
 if (data.note) {
