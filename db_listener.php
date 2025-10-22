@@ -178,7 +178,7 @@ function getGameDetails($game_id){
 }
 
 
-
+/*
 function getGameRecommendations($query = null) {
 	$apiKey='e92e94964e714d64aa425f8c11d0996e';
 	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
@@ -189,6 +189,8 @@ function getGameRecommendations($query = null) {
 	$data= json_decode($response, true);
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
+
+no longer active will delete later */
 
 function getPersonalizedRecommendations($username){
 	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
@@ -233,23 +235,99 @@ function getPersonalizedRecommendations($username){
 
 	foreach($seedName as $name){
 	$q= $urlencode($name);
-	$skibidiUrl = "https://api.rawg.io/api/games?key=$apiKey&search=$q&page_size=1";
-	$sresp= @file_get_contents($skibidiUrl);
-	 if(!$stesp) continues;
+	$searchUrl = "https://api.rawg.io/api/games?key=$apiKey&search=$q&page_size=1";
+	$sresp= @file_get_contents($searchUrl);
+	 if(!$stesp) continue;
 	$sdata = json_decode($sresp, true);
 	$hit = $sdata['results'][0] ?? null;
 	 if(!$hit || empty($hit['id'])) continue;
 	$id = $hit['id'];
 
-	$cameraUrl ="https://api.rawg.io/api/games/$id?key=$apiKey";
-	$dresp= @file_get_contents($cameraUrl);
+	$detailsUrl ="https://api.rawg.io/api/games/$id?key=$apiKey";
+	$dresp= @file_get_contents($searchUrl);
 	 if(!$dresp) continue;
 	$det= json_decode($dresp, true);
 
 	$genres = is_array($det['genres'] ?? null) ? $det['genres'] : [];
 	$plats= is_array($det['platforms'] ?? null) ? $det['platforms'] : [];
 
-	
+
+
+	 if(in_array($name, $liked, true)){
+	foreach($genres as $g){ $slug = $g['slug'] ?? ''; if ($slug) $genreWeights[$slug] = ($genreWeights[$slug] ?? 0) + 2; }
+	foreach($plats as $p) { $ps= $p['platform']['slug'] ?? ''; if($ps) $platformWeights[$ps]= ($platformWeights[$ps] ?? 0) + 2; }
+	} else
+	 if(in_array($name, $liked_soft, true)) {
+	foreach($genres as $g) { $slug = $g['slug'] ?? ''; if ($slug) $genreWeights[$slug]= ($genreWeights[$slug] ?? 0) + 1; }
+	foreach($plats as $p){ $ps   = $p['platform']['slug'] ?? ''; if ($ps) $platformWeights[$ps] = ($platformWeights[$ps] ?? 0) + 1; }
+	} else{
+	foreach($genres as $g){ $slug = $g['slug'] ?? ''; if ($slug) $dislikedGenres[$slug] = true;}
+	foreach($plats as $p) { $ps= $p['platform']['slug'] ?? ''; if($ps) $dislikedPlatforms[$ps] = true;}}
+
+
+
+	if(in_array($name,$liked, true) || in_array($name, $liked_soft, true)){
+	$suggUrl = "https://api.rawg.io/api/games/$id/suggested?key=$apiKey&page_size=15";
+	$sh= @file_get_contents(@suggUrl);
+	 if($sg){ $sgd= json_decode(suggUrl)($sg, true);
+	  foreach(($sgd['results']?? []) as $g){ if(!empty($g['id'])) $seenGameIds[$g['id']] = $g;}  }   }
+
+
+
+	if (!empty($genreWeights)){
+	$topGenreSlice = array_slice(array_keys($genreWeights, 0, 3);
+	$genresParam= implode(',', $topGenreSlice);
+	$discUrl= "https://api.rawg.io/api/games?key=$apiKey&genres=$genresParam&ordering=-rating&page_size=40";
+	$dj= @file_get_contents($discUrl);
+	 if($dj){$dd= json_decode($dj, true);
+	  foreach(($dd['results'] ?? []) as $g){if(!empty($g['id'])) $seenGameIds[$g['id']] = $g;}  }   }
+
+
+
+	$candidates = array_values($seenGameIds);
+
+	foreach($canditas as $g){ if(empty($g['id'])) continue;
+	$gGenres= [];
+	 foreach (($g['genres'] ?? []) as $gg) { if (!empty($gg['slug'])) $gGenres[$gg['slug']] = true; }
+
+	$gPlatSlugs = [];
+	 foreach(($g['platforms'] ?? [])as $pp){$pls = $pp['platform']['slug']?? ''; 
+	  if($pls) $gPlatSlugs[$pls] = true;}
+
+	$avoid =false;
+	 foreach($gGenres as $s=> $_){if(isset($dislikedGenre[$s])){$avoid=true; break;}}
+	 if($avoid) continue;
+	 foreach($gPlatSlugs as $ps=> $_){if(isset($dislikedPlatforms[$ps]){ $avoid= true; break;}
+	 if($avoid) continue;
+	$filtered[]= $g;}
+
+
+
+
+	if(count($filtered) < 5){ $fill = "https://api.rawg.io/api/games?key=$apiKey&ordering=-rating&page_size=20";
+	$fj = @file_get_contents($fill);
+	 if ($fj){
+	$fd= json_decode($fj, true);
+	  foreach (($fd['results'] ?? []) as $g){
+		if (empty($g['id'])) continue;
+
+	$gGenres= [];
+	   foreach (($g['genres'] ?? []) as $gg){if (!empty($gg['slug'])) $gGenres[$gg['slug']] = true;}
+
+	 $gPlatSlugs = [];
+	  foreach (($g['platforms'] ?? []) as $pp){ $pls = $pp['platform']['slug'] ?? '';
+	if($pls) $gPlatSlugs[$pls] = true;}
+
+	$avoid = false;
+	  foreach ($gGenres as $s => $_) {if(iset($dislikedGrenes[$s])) { $avoid= true; break;}}
+	 if($avoid) continue;
+	 foreach ($gPlatSlugs as $ps=> $_) {if(isset($dislikedPlatforms[$ps])){ $avoid = true; break;}}
+	if($avoid) continue;
+
+	$filtered[] = $g;
+	 if (count($filtered) >= 12) break;}}
+
+
 
 }
 
