@@ -98,8 +98,11 @@ button:hover {
 }
 
 /**Search Bar Styling*/
-#gameSearch {
+#gameSearch, #btnSearch, #startRecBtn {
 	font-size: 1rem;
+}
+
+#gameSearch {
 	box-shadow: 0 0 6px rgba(79,163,255,.25);
 	transition: all .2s ease;
 }
@@ -357,21 +360,6 @@ button:hover {
 	color: #ff6363;
 }
 
-/*Footer Styling*/
-footer {
-	text-align: center;
-	color: #768093;
-	font-size: .85rem;
-	padding: 26px 0;
-	border-top: 1px solid #1c2028;
-	margin-top: 40px;
-	transition: color .3s ease;
-}
-
-footer:hover {
-	color: #4fa3ff;
-}
-
 /*Animation Styling*/
 @keyframes fadePageIn {
 	to { opacity: 1; }
@@ -383,8 +371,13 @@ footer:hover {
 }
 
 @keyframes fadeUp {
-	from {opacity: 0; transform: translateY(10px); }
+	from { opacity: 0; transform: translateY(10px); }
 	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop {
+	from { transform: scale(.9); }
+	to { transform: scale(1); }
 }
 
 @keyframes popIn {
@@ -395,4 +388,19 @@ footer:hover {
 @keyframes shimmer {
 	0% { background-position: 0% 50%; }
 	100% { background-position: 200% 50%; }
+}
+
+/*Footer Styling*/
+footer {
+        text-align: center;
+        color: #768093;
+        font-size: .85rem;
+        padding: 26px 0;
+        border-top: 1px solid #1c2028;
+        margin-top: 40px;
+        transition: color .3s ease;
+}
+
+footer:hover {
+        color: #4fa3ff;
 }
