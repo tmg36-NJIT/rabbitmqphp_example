@@ -555,9 +555,8 @@ showNotice("Error loading your list.");
       }
  document.getElementById("viewWatchlistBtn").addEventListener("click", fetchWatchlist);
    </script>
-
-<!-- Email Prompting -->
 </section>
+<!-- Email Prompting -->
 <section id="email-prompt">
 <div id = "emailPrompt" class="modal">
 <div class="modal-content" style="text-align:center;">
@@ -605,15 +604,16 @@ console.error("hey looks like you had an error:", err);
 showNotice("You had a server error when saving ur email.");
   }
 });
+
 window.addEventListener("load", () => {
+const emailerror = <?= json_encode($shouldAskForEmail) ?>;
 <?php if ($shouldAskForEmail): ?>
-showEmailPrompt(); 
+console.log("Email prompt condition:", emailerror);
+showEmailPrompt();
 <?php endif; ?>
 });
 
-</script>
-</section>
-
+</script> </section>
 <!-- Deliverable 5- Notification System -->
 <section id="deliverable-5">
 <script> //some setup vars, no funct. yet
