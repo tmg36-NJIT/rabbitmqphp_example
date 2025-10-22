@@ -596,14 +596,32 @@ const username = "<?= htmlspecialchars($username) ?>";
 //gonna add some check that blocks typos
 const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 if (!ok) { showNotice("Hi, can you please enter a valid email address."); return; }
-//gon start working on a try/catch tht posts update_email to backend w/ success/errror UI
+//gon start working on a try/catch tht posts update_email to backend w/ success/errror UI (update added)
 // email save handler
 
+try {
+const res = await fetch("rabbit_search.php", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ type: "update_email", username, email })
+    });
+const data = await res.json();
+if (data?.success) {
+showNotice("Email saved");
+closeEmailModal();
+    } else {
+showNotice(data?.message || "Could not save email.");
+    }
+  } catch(err) {
+console.error("hey looks like you had an error:", err);
+showNotice("You had a server error when saving ur email.");
+  }
+});
 window.addEventListener("load", () => {
 <?php if ($shouldAskForEmail): ?>
-showEmailPrompt(); <?php endif; ?>
+showEmailPrompt(); 
+<?php endif; ?>
 });
-
 
 </script>
 </section>
@@ -625,7 +643,7 @@ notifBellBtn.addEventListener('click', async () => {
 const isHidden = notifPanel.style.display === 'none' || !notifPanel.style.display;
 
 if (isHidden) {
-await loadNotifs();
+await loadNotifications();
 notifPanel.style.display = 'block';
  } 
 else
@@ -633,8 +651,12 @@ else
 notifPanel.style.display = 'none';
  }
       });
+document.addEventListener('click', (e) => {
+const inside = notifPanel.contains(e.target) || notifBellBtn.contains(e.target);
+if (!inside) notifPanel.style.display = 'none';
+      });
 
-async function loadNotifs() {
+async function loadNotifcations() {
  try {
 const res  = await fetch("rabbit_search.php", {
 method: "POST",
@@ -647,13 +669,14 @@ drawNotifications([]);
 return;
           }
 notifCache = Array.isArray(data.notifications) ? data.notifications : [];
-drawNotifs(notifCache);
+drawNotifications(notifCache);
 updateBadge(notifCache);
         } 
 catch (err) {
 console.error("loadNotifications error:", err);
-drawNotifs([]);
+drawNotifications([]);
         }
+
       }
 //gona make some functions to render + update notifs, will add logic* later	
 
@@ -723,15 +746,39 @@ notifBadge.style.display = 'none';
 }
 //currently working on implementing some type of "mark as read" logic"
 async function markNotificationsRead(id){
+try {
+const res  = await fetch("rabbit_search.php", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({ type: "mark_notification_read", notification_id: Number(id) })
+});
+const data = await res.json();
+if (data?.success) {
+notifCache = notifCache.map(n => n.id == id ? { ...n, is_read: 1 } : n);
+drawNotifications(notifCache);
+updateBadge(notifCache);
 }
-//adding for later:
+} catch (e) {
+console.error("markNotificationRead error:", e);
+}
+}
+markAllBtn.addEventListener('click', async () => {
+const unread = notifCache.filter(n => Number(n.is_read) === 0);
+try {
+await Promise.all(unread.map(n => fetch("rabbit_search.php", {
+method: "POST",
+headers: {"Content-Type":"application/json"},
+body: JSON.stringify({ type: "mark_notification_read", notification_id: Number(n.id) })
+})));
+} catch {
+}
+await loadNotifications();
+});
+
 setInterval(loadNotifications, 60000);
 window.addEventListener('load', loadNotifications);
 </script>
 </section>
-
-
-
 
 <!-- Deliverable 6: Message Board System -->
 <script> //looking into existing models atm 
