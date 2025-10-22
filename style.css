@@ -138,8 +138,8 @@ button:hover {
 .game-card img {
 	width: 100%;
 	height: auto;
-	border-radius: 10px;
 	display: block;
+	border-radius: 10px;
 	transition: transform .3s ease;
 }
 
@@ -221,12 +221,26 @@ button:hover {
 	width: 90%;
 	max-width: 400px;
 	box-shadow: 0 0 20px rgba(0,0,0,.5);
-	animation: popIn .3 ease;
+	animation: pop .3s ease;
 }
 
 .modal-content h2 {
 	color: #4fa3ff;
 	margin-bottom: 15px;
+}
+
+.modal-content button {
+	background: #4fa3ff;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	color: white;
+	cursor: pointer;
+	transition: .2s ease;
+}
+
+.modal-content button:hover {
+	background: #3580d1;
 }
 
 .modal-options button {
@@ -238,116 +252,112 @@ button:hover {
 	color: #fff;
 	padding: 10px;
 	border-radius: 6px;
+	transition: 0.2s ease;
 }
 
 .modal-options button:hover {
-	background: #3580d1;
-}
-
-#emailPrompt {
-	display: none;
-	position: fixed;
-	top: 0;
-	left 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0,0,0,.7);
-	align-items: center;
-	justify-content: center;
-	z-index: 2500;
-}
-
-#emailPrompt .modal-content {
-	background: #1a1d24;
-	border-radius: 12px;
-	padding: 30px;
-	box-shadow: 0 0 20px rgba(0,0,0.5);
-	width: 90%;
-	max-width: 400px;
-}
-
-#emailPrompt button {
 	background: #4fa3ff;
-	color: #fff;
-	border: none;
-	border-radius: 6px;
-	padding: 10px 18px;
-	cursor: pointer;
-	transition: 0.2s;
 }
 
-#emailPrompt button:hover {
-	background: #357fda
-}
-.notice-box {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	background: #1a1d24;
-	color: #fff;
-	padding: 25px 35px;
-	border-radius: 10px;
-	box-shadow: 0 0 25px rgba(0,0,0,0.6);
-	border: 1px solid #4fa3ff;
-	z-index: 3000;
-	display: none;
-	text-align: center;
-	width: 320px;
-}
-
-.notice-box p {
-	margin-bottom: 15px;
-	font-size: 0.95rem;
-}
-
-.notice-box button {
-	background: #4fa3ff;
-	color: #fff;
-	border: none;
-	border-radius: 6px;
-	padding: 8px 14px;
-	cursor: pointer;
-	transition: 0.2 ease;
-}
-
-.notice-box button:hover {
-	background: #357fda;
-}
-
-#successPopup, #errorPopup {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%; 
-	height: 100%;
-	background: rgba(0,0,0,0.6);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	z-index: 2000;
-}
-
-#successPopup.show, #errorPopup.show {
-	display: flex;
-	animation: fadeIn 0.3s ease-in-out;
-}
-
-#closeModal, #closeNotice {
-	cursor: pointer;
-	color: #aaa;
-	font-size: 1.2rem;
-	position: absolute;
-	top: 10px;
-	right: 15px;
-	transition: color .2s ease;
-}
-
-#closeModal:hover, #closeNotice:hover {
+#closeModal:hover {
 	color: #4fa3ff;
 	transform: scale(1.1);
 }
+
+/*Email Prompt Styling*/
+#emailPrompt {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,.7);
+        align-items: center;
+        justify-content: center;
+        z-index: 2500;
+}
+
+#emailPrompt .modal-content {
+        background: #1a1d24;
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 0 20px rgba(0,0,0.5);
+        width: 90%;
+        max-width: 400px;
+}
+
+#emailPrompt button {
+        background: #4fa3ff;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 18px;
+        cursor: pointer;
+        transition: 0.2s;
+}
+
+#emailPrompt button:hover {
+        background: #357fda;
+}
+
+/*Success/Error Modal Styling*/
+#successPopup, #errorPopup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%; 
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+}
+
+#successPopup.show, #errorPopup.show {
+        display: flex;
+        animation: fadeIn 0.3s ease-in-out;
+}
+
+/*Notice Box Modal Styling*/
+.notice-box {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #1a1d24;
+        color: #fff;
+        padding: 25px 35px;
+        border-radius: 10px;
+        box-shadow: 0 0 25px rgba(0,0,0,0.6);
+        border: 1px solid #4fa3ff;
+        z-index: 3000;
+        display: none;
+        text-align: center;
+        width: 320px;
+}
+
+.notice-box p {
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+}
+
+.notice-box button {
+        background: #4fa3ff;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 14px;
+        cursor: pointer;
+        transition: 0.2 ease;
+}
+
+.notice-box button:hover {
+        background: #357fda;
+}
+
 
 /*Other Text Styling*/
 .center-note {
@@ -403,4 +413,77 @@ footer {
 
 footer:hover {
         color: #4fa3ff;
+}
+
+/*Notification Bell*/
+#notifBell {
+	position: relative;
+	display: inline-block;
+	margin-left: 12px;
+}
+
+#openNotifBtn {
+	background: #1e222b;
+	border: 1px solid #2a2f38;
+	border-radius: 8px;
+	padding: 8px 10px;
+	color: #fff;
+	cursor: pointer;
+}
+
+#notifBadge {
+	display: none;
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	background: #ff4d4d;
+	color: #fff
+	border-radius: 999px;
+	padding: 2px 6px;
+	font-size: 12px;
+	line-height: 1;
+}
+
+/*Notif Panel*/
+#notifPanel {
+	display: none;
+	position: absolute;
+	right: 16px;
+	top: 70px;
+	z-index: 9999;
+	width: 380px;
+	max-height: 420px;
+	overflow-y: auto;
+	background: #1a1d24;
+	color: #fff;
+	border: 1px solid #2a2f38;
+	border-radius: 10px;
+	box-shadow: 0 6px 18px rgba(0,0,0,.6);
+}
+
+#notifPanel > div:first-child {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 12px;
+	border-bottom: 1px solid #2a2f38;
+}
+
+#markAllBtn {
+	background: none;
+	border: 1px solid #2a2f38;
+	color: #9aa0aa;
+	border-radius: 6px;
+	padding: 4px 8px;
+	cursor: pointer;
+}
+
+#notifList {
+	padding: 10px 0;
+}
+
+#notifEmpty {
+	display: none;
+	padding: 16px;
+	color: #9aa0aa;
 }

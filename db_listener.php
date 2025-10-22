@@ -211,20 +211,20 @@ function getPersonalizedRecommendations($username){
 	$r= (int)$row["rating'];
 	if($r >= 4) $liked[] = $row['game_name'];
 	else if($r == 3) $liked_soft[] = $row['game_name'];
-	else if($r <= 2) $disliked[] = $row['game_name']; }
+	else($r <= 2) $disliked[] = $row['game_name']; }
 
 	$stmt->close();
 	$mysqli->close();
-	
+
 
 	$apiKey = 'e92e94964e714d64aa425f8c11d0996e';
 
-	if(empty($liked) && empty($liked_soft) $$ empty($disliked){
+	if(empty($liked) && empty($liked_soft) && empty($disliked){
 	$url = "https://api.rawg.io/api/games?key=$apiKey&ordering=-rating&page_size=5";
 	$json= @file_get_contents($url);
 	 if(!$json)return ['success' => false, 'message' => "failled to reach api"];
 	$data = json_decode($json, true);
-	return ['success' => true, 'message' => 'can"t find reviews/you don"t have any. lock in more reviews to get picks', 'results' => ($data['results'] ?? []);}
+	return ['success' => true, 'message' => 'can"t find reviews/you don"t have any. lock in more reviews to get picks', 'results' => ($data['results'] ?? [])];}
 
 	$genreWeights = [];
 	$platformWeights = [];
@@ -233,18 +233,18 @@ function getPersonalizedRecommendations($username){
 	$seenGameIds= [];
 	$seedNames= array_merge($liked, $liked_soft, $disliked);
 
-	foreach($seedName as $name){
-	$q= $urlencode($name);
+	foreach($seedNames as $name){
+	$q= urlencode($name);
 	$searchUrl = "https://api.rawg.io/api/games?key=$apiKey&search=$q&page_size=1";
 	$sresp= @file_get_contents($searchUrl);
-	 if(!$stesp) continue;
+	 if(!$sresp) continue;
 	$sdata = json_decode($sresp, true);
 	$hit = $sdata['results'][0] ?? null;
 	 if(!$hit || empty($hit['id'])) continue;
 	$id = $hit['id'];
 
 	$detailsUrl ="https://api.rawg.io/api/games/$id?key=$apiKey";
-	$dresp= @file_get_contents($searchUrl);
+	$dresp= @file_get_contents($detailsUrl);
 	 if(!$dresp) continue;
 	$det= json_decode($dresp, true);
 
@@ -275,7 +275,7 @@ function getPersonalizedRecommendations($username){
 
 
 	if (!empty($genreWeights)){
-	$topGenreSlice = array_slice(array_keys($genreWeights, 0, 3);
+	$topGenreSlice = array_slice(array_keys($genreWeights, 0, 3));
 	$genresParam= implode(',', $topGenreSlice);
 	$discUrl= "https://api.rawg.io/api/games?key=$apiKey&genres=$genresParam&ordering=-rating&page_size=40";
 	$dj= @file_get_contents($discUrl);
@@ -337,7 +337,7 @@ function getPersonalizedRecommendations($username){
 	$final = [];
 	$round = 0;
 	while (count($final) < 5 && $round < 20){
-	 foreach($genreBuckes as $slugs => $list){
+	 foreach($genreBucktes as $slugs => $list){
 	  if (!count($list)) continue;
 	$pick= array_shift($genreBuckets[$slug]);
 
