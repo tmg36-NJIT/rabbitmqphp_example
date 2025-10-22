@@ -53,6 +53,22 @@ $_SESSION['email'] = $response['email'];
   <form action="logout.php" method="post" style="display:inline;">
     <button type="submit" class="logout-btn">Logout</button>
   </form>
+
+<!-- Notification Bell -->
+<div id="notifBell">
+<button id="openNotifBtn" type="button" title="Notifications">🔔</button>
+<span id="notifBadge"></span>
+</div>
+
+<!-- Notifications Panel -->
+<div id="notifPanel">
+<div>
+<strong>Notifications</strong>
+<button id="markAllBtn">Mark all read</button> </div>
+<div id="notifList"></div>
+<div id="notifEmpty">No notifications yet.</div>
+</div>
+</header>
 </header>
 <main>
 
@@ -583,8 +599,7 @@ const email= document.getElementById("emailInput").value.trim();
 const username = "<?= htmlspecialchars($username) ?>";
 //gonna add some check that blocks typos
 const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-if (!ok) { showNotice("Hi, can yu please enter a valid email address."); return; }
-
+if (!ok) { showNotice("Hi, can you please enter a valid email address."); return; }
 //gon start working on a try/catch tht posts update_email to backend w/ success/errror UI
 // email save handler
 
