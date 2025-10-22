@@ -208,10 +208,10 @@ function getPersonalizedRecommendations($username){
 	$disliked =[];
 
 	while($row = $result->fetch_assoc()){
-	$r= (int)$row["rating'];
+	$r= (int)$row["rating"];
 	if($r >= 4) $liked[] = $row['game_name'];
 	else if($r == 3) $liked_soft[] = $row['game_name'];
-	else($r <= 2) $disliked[] = $row['game_name']; }
+	else if($r <= 2) $disliked[] = $row['game_name']; }
 
 	$stmt->close();
 	$mysqli->close();
@@ -219,12 +219,12 @@ function getPersonalizedRecommendations($username){
 
 	$apiKey = 'e92e94964e714d64aa425f8c11d0996e';
 
-	if(empty($liked) && empty($liked_soft) && empty($disliked){
+	if(empty($liked) && empty($liked_soft) && empty($disliked)){
 	$url = "https://api.rawg.io/api/games?key=$apiKey&ordering=-rating&page_size=5";
 	$json= @file_get_contents($url);
 	 if(!$json)return ['success' => false, 'message' => "failled to reach api"];
 	$data = json_decode($json, true);
-	return ['success' => true, 'message' => 'can"t find reviews/you don"t have any. lock in more reviews to get picks', 'results' => ($data['results'] ?? [])];}
+	return ['success' => true, 'message' => 'unable find reviews/you possess none. lock in more reviews to get picks', 'results' => ($data['results'] ?? [])];}
 
 	$genreWeights = [];
 	$platformWeights = [];
@@ -268,25 +268,28 @@ function getPersonalizedRecommendations($username){
 
 	if(in_array($name,$liked, true) || in_array($name, $liked_soft, true)){
 	$suggUrl = "https://api.rawg.io/api/games/$id/suggested?key=$apiKey&page_size=15";
-	$sh= @file_get_contents(@suggUrl);
-	 if($sg){ $sgd= json_decode(suggUrl)($sg, true);
-	  foreach(($sgd['results']?? []) as $g){ if(!empty($g['id'])) $seenGameIds[$g['id']] = $g;}  }   }
+	$sg= @file_get_contents($suggUrl);
+	 if($sg){ $sgd= json_decode($sg, true);
+	  foreach(($sgd['results']?? []) as $g){ if(!empty($g['id'])) $seenGameIds[$g['id']] = $g;}}}}
 
 
+	arsort($genreWeights);
+	arsort($platformWeights);
 
 	if (!empty($genreWeights)){
-	$topGenreSlice = array_slice(array_keys($genreWeights, 0, 3));
+	$topGenreSlice = array_slice(array_keys($genreWeights), 0, 3);
 	$genresParam= implode(',', $topGenreSlice);
 	$discUrl= "https://api.rawg.io/api/games?key=$apiKey&genres=$genresParam&ordering=-rating&page_size=40";
 	$dj= @file_get_contents($discUrl);
 	 if($dj){$dd= json_decode($dj, true);
-	  foreach(($dd['results'] ?? []) as $g){if(!empty($g['id'])) $seenGameIds[$g['id']] = $g;}  }   }
+	  foreach(($dd['results'] ?? []) as $g){
+		if(!empty($g['id'])) $seenGameIds[$g['id']] = $g;}  }   }
 
 
 
 	$candidates = array_values($seenGameIds);
 
-	foreach($canditas as $g){ if(empty($g['id'])) continue;
+	foreach($candidates as $g){ if(empty($g['id'])) continue;
 	$gGenres= [];
 	 foreach (($g['genres'] ?? []) as $gg) { if (!empty($gg['slug'])) $gGenres[$gg['slug']] = true; }
 
@@ -295,9 +298,9 @@ function getPersonalizedRecommendations($username){
 	  if($pls) $gPlatSlugs[$pls] = true;}
 
 	$avoid =false;
-	 foreach($gGenres as $s=> $_){if(isset($dislikedGenre[$s])){$avoid=true; break;}}
+	 foreach($gGenres as $s=> $_){if(isset($dislikedGenres[$s])){$avoid=true; break;}}
 	 if($avoid) continue;
-	 foreach($gPlatSlugs as $ps=> $_){if(isset($dislikedPlatforms[$ps]){ $avoid= true; break;}
+	 foreach($gPlatSlugs as $ps=> $_){if(isset($dislikedPlatforms[$ps])){ $avoid= true; break;}}
 	 if($avoid) continue;
 	$filtered[]= $g;}
 
@@ -319,13 +322,13 @@ function getPersonalizedRecommendations($username){
 	if($pls) $gPlatSlugs[$pls] = true;}
 
 	$avoid = false;
-	  foreach ($gGenres as $s => $_) {if(iset($dislikedGrenes[$s])) { $avoid= true; break;}}
+	  foreach ($gGenres as $s => $_) {if(isset($dislikedGenres[$s])) { $avoid= true; break;}}
 	 if($avoid) continue;
 	 foreach ($gPlatSlugs as $ps=> $_) {if(isset($dislikedPlatforms[$ps])){ $avoid = true; break;}}
 	if($avoid) continue;
 
 	$filtered[] = $g;
-	 if (count($filtered) >= 12) break;}}
+	 if (count($filtered) >= 12) break;}}}
 
 
 	$genreBuckets= [];
@@ -337,7 +340,7 @@ function getPersonalizedRecommendations($username){
 	$final = [];
 	$round = 0;
 	while (count($final) < 5 && $round < 20){
-	 foreach($genreBucktes as $slugs => $list){
+	 foreach($genreBuckets as $slug => $list){
 	  if (!count($list)) continue;
 	$pick= array_shift($genreBuckets[$slug]);
 
@@ -352,7 +355,7 @@ function getPersonalizedRecommendations($username){
 
 
 	if(count($final) < 5){ foreach($filtered as $g){ $dupe = false;
-	  foreach($finl as $f){ if(!empty($f['id']) && $g['id'] === $g['id']){ $dupe = true; break;}}
+	  foreach($final as $f){ if(!empty($f['id']) && $g['id'] === $f['id']){ $dupe = true; break;}}
 	if($dupe) continue;
 
 	$final[]=$g;
