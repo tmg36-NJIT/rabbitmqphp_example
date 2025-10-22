@@ -282,7 +282,7 @@ button:hover {
         background: #1a1d24;
         border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 0 20px rgba(0,0,0.5);
+        box-shadow: 0 0 20px rgba(0,0,0,.5);
         width: 90%;
         max-width: 400px;
 }
@@ -310,7 +310,6 @@ button:hover {
         width: 100%; 
         height: 100%;
         background: rgba(0,0,0,0.6);
-        display: flex;
         align-items: center;
         justify-content: center;
         z-index: 2000;
@@ -351,7 +350,7 @@ button:hover {
         border-radius: 6px;
         padding: 8px 14px;
         cursor: pointer;
-        transition: 0.2 ease;
+        transition: .2s ease;
 }
 
 .notice-box button:hover {
@@ -413,4 +412,77 @@ footer {
 
 footer:hover {
         color: #4fa3ff;
+}
+
+/*Notification Bell*/
+#notifBell {
+	position: relative;
+	display: inline-block;
+	margin-left: 12px;
+}
+
+#openNotifBtn {
+	background: #1e222b;
+	border: 1px solid #2a2f38;
+	border-radius: 8px;
+	padding: 8px 10px;
+	color: #fff;
+	cursor: pointer;
+}
+
+#notifBadge {
+	display: none;
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	background: #ff4d4d;
+	color: #fff;
+	border-radius: 999px;
+	padding: 2px 6px;
+	font-size: 12px;
+	line-height: 1;
+}
+
+/*Notif Panel*/
+#notifPanel {
+	display: none;
+	position: absolute;
+	right: 16px;
+	top: 70px;
+	z-index: 9999;
+	width: 380px;
+	max-height: 420px;
+	overflow-y: auto;
+	background: #1a1d24;
+	color: #fff;
+	border: 1px solid #2a2f38;
+	border-radius: 10px;
+	box-shadow: 0 6px 18px rgba(0,0,0,.6);
+}
+
+#notifPanel > div:first-child {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 12px;
+	border-bottom: 1px solid #2a2f38;
+}
+
+#markAllBtn {
+	background: none;
+	border: 1px solid #2a2f38;
+	color: #9aa0aa;
+	border-radius: 6px;
+	padding: 4px 8px;
+	cursor: pointer;
+}
+
+#notifList {
+	padding: 10px 0;
+}
+
+#notifEmpty {
+	display: none;
+	padding: 16px;
+	color: #9aa0aa;
 }
