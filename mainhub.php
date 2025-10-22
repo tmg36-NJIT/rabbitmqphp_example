@@ -1,10 +1,4 @@
-// matshub.php was the prev. file (on git), switching to this file since prev. had some issues.
-// got to deliv 3/4 currently.
-// going to reformat code structure in this vers. for better readablity (sorted by deliverables)
-
 <?php
-// SESSION SETUP & EMAIL CHECK (Auth + Email presence) - some setp for deliv. 5 
-
 session_start();
 require_once("rabbitMQLib.inc"); 
 if (!isset($_SESSION['username'])) {
@@ -443,12 +437,6 @@ document.getElementById('reviewNotice').style.display = 'none';
 </section>
 
 <!-- Deliverable 3: Recommendation System -->
-
- <section id="deliverable-3">
-    <!-- The only button to start the flow -->
-    <div style="text-align:center; margin-top:10px;">
-      <button id="startRecBtn" class="cool-btn">Recommend Me a Game</button>
-    </div>
 
 <!-- Surprise Me button -->
 <div style="text-align:center; margin-top:10px;">
