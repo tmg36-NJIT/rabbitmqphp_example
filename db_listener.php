@@ -178,38 +178,38 @@ function getGameDetails($game_id){
 }
 
 
-/*
+
 function getGameRecommendations($query = null) {
 	$apiKey='e92e94964e714d64aa425f8c11d0996e';
 	$baseUrl = 'https://api.rawg.io/api/games?key=' . $apiKey;
 	if ($query){ $baseUrl .= '&search=' . urlencode($query);}
-	
+
 	$response= @file_get_contents($baseUrl);
 	if($response==false){return ['success'  => false, 'message' => 'Unable to reach the rawg api'];}
 	$data= json_decode($response, true);
 	return ['success' => true, 'results' => $data['results'] ?? []];
 }
 
-no longer active will delete later */
+
 
 function getPersonalizedRecommendations($username){
 	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) return['success'=> false,'message'=> 'DB connection failed'];
 
-	$stmt= $mysqli->preapare("SELECT game_name, rating FROM reviews WHERE username =?');
-	 if(!$stmt){$mysqli->close(); 
+	$stmt= $mysqli->prepare("SELECT game_name, rating FROM reviews WHERE username =?");
+	 if(!$stmt){$mysqli->close();
 	return['success'=> false, 'message' =>'Query prep had failed'];}
 	$stmt->bind_param("s", $username);
-	$stmt->exdecute();
+	$stmt->execute();
 	$result = $stmt->get_result();
 
 	$liked= [];
 	$liked_soft=[];
-	$disliked =[]; 
+	$disliked =[];
 
-	while($row = $res->fetch_assc()){ 
+	while($row = $result->fetch_assoc()){
 	$r= (int)$row["rating'];
-	if(r >= 4) $liked[] = $row['game_name'];
+	if($r >= 4) $liked[] = $row['game_name'];
 	else if($r == 3) $liked_soft[] = $row['game_name'];
 	else if($r <= 2) $disliked[] = $row['game_name']; }
 
@@ -512,6 +512,9 @@ function requestProcessor($request) {
 		if ($query){saveUserSearch($username, $query);}
 		 return getGameRecommendations($query);
 
+		case 'personalized_recommendations':
+		 $username =$request['username']?? 'Guest';
+		return getPersonalizedRecommendations($username);
 		case 'submit_review':
 		 $username= $request['username']??'Guest';
 		 $reviewText=$request['review']?? ($request['comment'] ?? '');
