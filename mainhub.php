@@ -97,9 +97,6 @@ const spinnerEl = document.getElementById('loadingSpinner');
 const placeholder = 'https://via.placeholder.com/250x150?text=No+Image';
 
 
-
-
-
 function resetGrid() {   //i renamed function
         resultsEl.innerHTML = '';
         noteEl.textContent = '';
@@ -533,16 +530,12 @@ document.getElementById('surpriseMeBtn').addEventListener('click', fetchPersonal
   showNotice("Your list is empty.");
             return;
           }
-
-
 const html = data.results.map(g => `
 <div style="background:#1e222b; padding:10px; margin:10px; border-radius:6px;">
 <strong>${g.game_name}</strong><br>
 <small>Added on ${g.added_at || g.last_updated || 'N/A'}</small>
 </div>
 `).join('');
-
-
 
  const modal = `
  <div id="watchlistModal" class="modal show" onclick="if(event.target.id==='watchlistModal'){document.getElementById('watchlistModal').remove();}">
@@ -561,14 +554,10 @@ showNotice("Error loading your list.");
         }
       }
  document.getElementById("viewWatchlistBtn").addEventListener("click", fetchWatchlist);
-   
-// need to add email prompt modal
+   </script>
 
-<div id = "emailPrompt" class ="modal">
-<div class = "modal-content" style = "text-align: center; 
-
- </script>
-  </section>
+<!-- Email Prompting -->
+</section>
 <section id="email-prompt">
 <div id = "emailPrompt" class="modal">
 <div class="modal-content" style="text-align:center;">
@@ -576,9 +565,12 @@ showNotice("Error loading your list.");
 <h2>Add Your Email</h2>
 <p>Do you want to get  updates &  notifiations?</p>
 <input id="emailInput" type="email" placeholder="you@example.com"
+style="width:80%; padding:10px; margin:10px 0; border-radius:6px; border:1px solid #2b3341; background:#151a21; color:#e9edf1;">
+<br>
+ <button id="emailSubmitBtn" class="btn">Save Email</button>
 </div>
 </div>
-</div>
+
 <script>
 function showEmailPrompt() {
 document.getElementById("emailPrompt").classList.add("show");
@@ -586,6 +578,22 @@ document.getElementById("emailPrompt").classList.add("show");
 function closeEmailModal() {
 document.getElementById("emailPrompt").classList.remove("show");
       }
+document.getElementById("emailSubmitBtn").addEventListener("click", async () => {
+const email= document.getElementById("emailInput").value.trim();
+const username = "<?= htmlspecialchars($username) ?>";
+//gonna add some check that blocks typos
+const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+if (!ok) { showNotice("Hi, can yu please enter a valid email address."); return; }
+
+//gon start working on a try/catch tht posts update_email to backend w/ success/errror UI
+// email save handler
+
+window.addEventListener("load", () => {
+<?php if ($shouldAskForEmail): ?>
+showEmailPrompt(); <?php endif; ?>
+});
+
+
 </script>
 </section>
 
@@ -651,7 +659,8 @@ function updateBadge(list) {
 
 
 <!-- Deliverable 6: Message Board System -->
-<script> //looking into existing models atm
+<script> //looking into existing models atm 
+</script>
 </main>
 <footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
 </body>
