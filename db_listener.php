@@ -216,7 +216,7 @@ function getPersonalizedRecommendations($username){
 	$stmt->close();
 	$mysqli->close();
 	
-	//will need later/check w/ tariq 
+
 	$apiKey = 'e92e94964e714d64aa425f8c11d0996e';
 
 	if(empty($liked) && empty($liked_soft) $$ empty($disliked){
@@ -328,6 +328,37 @@ function getPersonalizedRecommendations($username){
 	 if (count($filtered) >= 12) break;}}
 
 
+	$genreBuckets= [];
+	foreach($filtered as $g){
+	$firstGenre =$g['genres'][0]['slug']?? 'unknown';
+	 if(!isset($genreBuckets[$firstGenre])) $genreBuckets[$firstGenre] = [];
+	$genreBuckets[$firstGenre][] =$g;}
+
+	$final = [];
+	$round = 0;
+	while (count($final) < 5 && $round < 20){
+	 foreach($genreBuckes as $slugs => $list){
+	  if (!count($list)) continue;
+	$pick= array_shift($genreBuckets[$slug]);
+
+	$dupe =false;
+	 foreach($final as $f){ if(!empty($f['id']) && $f['id'] === $pick['id']){ $dupe= true; break;} }
+	 if($dupe) continue;
+
+	$final[] =$pick;
+	 if(count($final) >= 5) break;}
+
+	$round++;}
+
+
+	if(count($final) < 5){ foreach($filtered as $g){ $dupe = false;
+	  foreach($finl as $f){ if(!empty($f['id']) && $g['id'] === $g['id']){ $dupe = true; break;}}
+	if($dupe) continue;
+
+	$final[]=$g;
+	if(count($final) >= 5) break;}}
+
+	return['success'=> true, 'results' => $final];
 
 }
 
