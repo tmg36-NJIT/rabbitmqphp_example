@@ -626,6 +626,7 @@ showEmailPrompt();
 </script>
 </section>
 
+<!-- Deliverable 5- Notification System -->
 <section id="deliverable-5">
 <script> //some setup vars, no funct. yet
 
@@ -744,7 +745,7 @@ notifBadge.style.display = 'none';
 }
 
 //currently working on implementing some type of "mark as read" logic"
-async function markNotificationsRead(id){
+async function markNotificationRead(id){
 try {
 const res  = await fetch("rabbit_search.php", {
 method: "POST",
@@ -758,7 +759,7 @@ drawNotifications(notifCache);
 updateBadge(notifCache);
 }
 } catch (e) {
-console.error("markNotificationsRead error:", e);
+console.error("markNotificationRead error:", e);
 }
 }
 markAllBtn.addEventListener('click', async () => {
@@ -767,7 +768,7 @@ try {
 await Promise.all(unread.map(n => fetch("rabbit_search.php", {
 method: "POST",
 headers: {"Content-Type":"application/json"},
-body: JSON.stringify({ type: "mark_notifications_read", notification_id: Number(n.id) })
+body: JSON.stringify({ type: "mark_notification_read", notification_id: Number(n.id) })
 })));
 } catch {
 }
