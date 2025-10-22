@@ -656,7 +656,7 @@ const inside = notifPanel.contains(e.target) || notifBellBtn.contains(e.target);
 if (!inside) notifPanel.style.display = 'none';
       });
 
-async function loadNotifcations() {
+async function loadNotifications() {
  try {
 const res  = await fetch("rabbit_search.php", {
 method: "POST",
@@ -734,16 +734,15 @@ notifListEl.appendChild(row);
 }
 
 function updateBadge(list) {
-}
-const unread= list.filter(n => Number(n.is_read) === 0).length;
+const unread = list.filter(n => Number(n.is_read) === 0).length;
 if (unread > 0) {
 notifBadge.textContent = unread > 99 ? '99+' : String(unread);
 notifBadge.style.display = 'inline-block';
-} else 
-{
+} else {
 notifBadge.style.display = 'none';
+  }
 }
-}
+
 //currently working on implementing some type of "mark as read" logic"
 async function markNotificationsRead(id){
 try {
@@ -759,7 +758,7 @@ drawNotifications(notifCache);
 updateBadge(notifCache);
 }
 } catch (e) {
-console.error("markNotificationRead error:", e);
+console.error("markNotificationsRead error:", e);
 }
 }
 markAllBtn.addEventListener('click', async () => {
@@ -768,7 +767,7 @@ try {
 await Promise.all(unread.map(n => fetch("rabbit_search.php", {
 method: "POST",
 headers: {"Content-Type":"application/json"},
-body: JSON.stringify({ type: "mark_notification_read", notification_id: Number(n.id) })
+body: JSON.stringify({ type: "mark_notifications_read", notification_id: Number(n.id) })
 })));
 } catch {
 }
@@ -787,3 +786,4 @@ window.addEventListener('load', loadNotifications);
 <footer>MATS: GameHub © <?= date('Y') ?> | Using  RAWG API</footer>
 </body>
 </html>
+
