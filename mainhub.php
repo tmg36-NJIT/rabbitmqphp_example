@@ -444,8 +444,6 @@ document.getElementById('reviewNotice').style.display = 'none';
 
 <!-- Deliverable 3: Recommendation System -->
 
-<!-- not confirmed but may do 2 game rec options: based on filtering + user rating/reviews -->
-
  <section id="deliverable-3">
     <!-- The only button to start the flow -->
     <div style="text-align:center; margin-top:10px;">
@@ -645,7 +643,7 @@ body: JSON.stringify({ type: "get_notifications", username: NOTIF_USERNAME })
           });
 const data = await res.json();
 if (!data?.success) {
-drawNotifs([]);
+drawNotifications([]); 
 return;
           }
 notifCache = Array.isArray(data.notifications) ? data.notifications : [];
@@ -659,12 +657,76 @@ drawNotifs([]);
       }
 //gona make some functions to render + update notifs, will add logic* later	
 
-function drawNotifs(list) {
+function drawNotifications(list) {
+notifListEl.innerHTML = '';
+if (!list.length) {
+notifEmpty.style.display = 'block';
+return;
+  }
+notifEmpty.style.display = 'none';
+
+list.forEach(n => {
+const isRead = Number(n.is_read) === 1;
+const row = document.createElement('div');
+row.style.cssText = [
+"padding:10px 12px",
+"border-bottom:1px solid #2a2f38",
+"display:flex",
+"gap:10px",
+"align-items:flex-start"
+].join(';');
+
+const dot = document.createElement('span');
+dot.textContent = isRead ? '•' : '●';
+dot.style.cssText = `margin-top:2px; font-size:18px; color:${isRead ? '#666' : '#4fa3ff'};`;
+
+const body = document.createElement('div');
+body.style.cssText = "flex:1;";
+
+const msg = document.createElement('div');
+msg.textContent = n.message;
+msg.style.cssText = "white-space:pre-wrap; line-height:1.35;";
+
+const meta = document.createElement('div');
+meta.textContent = n.created_at || '';
+meta.style.cssText = "color:#9aa0aa; font-size:12px; margin-top:4px;";
+
+const actions = document.createElement('div');
+actions.style.cssText = "display:flex; gap:8px; margin-top:6px;";
+
+const btn = document.createElement('button');
+btn.textContent = isRead ? "Read" : "Mark read";
+btn.disabled = isRead;
+btn.className = "btn small";
+btn.addEventListener('click', () => markNotificationRead(n.id));
+
+actions.appendChild(btn);
+body.appendChild(msg);
+body.appendChild(meta);
+body.appendChild(actions);
+row.appendChild(dot);
+row.appendChild(body);
+notifListEl.appendChild(row);
+  });
 }
+
 function updateBadge(list) {
 }
-
-
+const unread= list.filter(n => Number(n.is_read) === 0).length;
+if (unread > 0) {
+notifBadge.textContent = unread > 99 ? '99+' : String(unread);
+notifBadge.style.display = 'inline-block';
+} else 
+{
+notifBadge.style.display = 'none';
+}
+}
+//currently working on implementing some type of "mark as read" logic"
+async function markNotificationsRead(id){
+}
+//adding for later:
+setInterval(loadNotifications, 60000);
+window.addEventListener('load', loadNotifications);
 </script>
 </section>
 
