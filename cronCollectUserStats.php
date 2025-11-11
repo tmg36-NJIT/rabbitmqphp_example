@@ -1,8 +1,3 @@
-//THIS FILE IS JUST A COPY AND PASTE. IT DOES NOT WORK!!!!!!!!!!!!! JUST FOR COMMITS!!!!!!!!!!!!!!!! DO NOT TOUCH UNELSS YOUR MI!!!!!!!!!!!!
-//DO NOT TOUCH UNLESS YOUR NAME STARTS WITH M AND ENDS WITH I.!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//file ment just for commits.
-
-
 <?php
 require '/var/www/html/vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
@@ -16,7 +11,7 @@ $time=date('Y-m-d H:i:s');
 $logFile = '/var/www/html/game_watchlist_cron.log';
 
 //get email usr and pass from .env file
-$env = parse_ini_file(__DIR__ . '/security.env');
+$env = parse_ini_file('/var/www/html/security.env');
 $emailUser = $env['EMAIL_USER'] ?? '';
 $emailPass = $env['EMAIL_PASS'] ?? '';
 
