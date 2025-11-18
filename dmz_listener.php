@@ -6,9 +6,9 @@ require_once('rabbitMQLib.inc');
 
 //get usrreviwes, testing functions to use for later
 function fetchUsrReviewsThruRMQ($username){
-	$client = new rabbitMQclient("testrabbitMQ.ini", "testServer");
-	$response = $client->send_request(['type' => 'get_user_reviews', 'username' => $username];);
-	 if(!is_array($response)|| empty($response['success'])) {return['success' false, 'reviews'=> []];}
+	$client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
+	$response = $client->send_request(['type' => 'get_user_reviews', 'username' => $username,]);
+	 if(!is_array($response)|| empty($response['success'])) {return['success'=> false, 'reviews'=> []];}
 	return ['success' =>true, 'reviews' =>$response['reviews'] ?? [], ];
 }
 
