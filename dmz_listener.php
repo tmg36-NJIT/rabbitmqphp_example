@@ -52,15 +52,13 @@ function getPersonalizedRecommendations($username){
 	$liked_soft=[];
 	$disliked =[];
 
-	while($row = $result->fetch_assoc()){
-	$r= (int)$row["rating"];
-	if($r >= 4) $liked[] = $row['game_name'];
-	else if($r == 3) $liked_soft[] = $row['game_name'];
-	else if($r <= 2) $disliked[] = $row['game_name']; }
-
-	$stmt->close();
-	$mysqli->close();
-
+	foreach($dbReviews['reviews'] as $row){
+	$r=(int)$row['rating'];
+	$name= $row['game_name'];
+	 if ($r >=4){$liked[] = $name;}
+	else if ($r == 3){ $liked_soft[] = $name;}
+	else if ($r <= 2){ $disliked[] = $name;}
+	 }
 
 	$apiKey = 'e92e94964e714d64aa425f8c11d0996e';
 
