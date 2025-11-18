@@ -247,8 +247,11 @@ function getUserReviews($username){
 	$stmt- > execute();
 	$result = $stmt->get_result();
 	
-	$reviews =[]
+	$reviews =[];
 	while($rows= $result->fetch_assoc()){$reviews[] =$rows}
+	$stmt-> close();
+	$mysqli->close();
+	return ['success' => true,'reviews' =>$reviews];
 
 }
 
