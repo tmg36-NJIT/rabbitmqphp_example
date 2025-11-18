@@ -240,14 +240,17 @@ function getUserReviews($username){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if ($mysqli->connect_errno){ return ['success' => false,'message' => 'Database connection failed', 'reviews' => []];}
 
+	$stmt= $mysqli->prepare("SELECT game_name, rating FROM reviews WHERE username =?");
+	 if(!stmt){$mysqli->close();
+	return ['success'=> false, 'message' => 'Query prepp failed', 'reviews' => []];}
+	$stmt->bind_param("s", $username);
+	$stmt- > execute();
+	$result = $stmt->get_result();
+	
+	$reviews =[]
+	while($rows= $result->fetch_assoc()){$reviews[] =$rows}
 
 }
-
-
-
-
-
-
 
 
 
