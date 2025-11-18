@@ -233,6 +233,25 @@ function deleteReview($username, $game_name){
 	if($affected>0) return['success'=> true, 'message' => 'Review is deleted'];
 	else return ['success'=> false, 'message' => 'cant find review to delete'];
 }
+
+
+//dmz use
+function getUserReviews($username){
+	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
+	 if ($mysqli->connect_errno){ return ['success' => false,'message' => 'Database connection failed', 'reviews' => []];}
+
+
+}
+
+
+
+
+
+
+
+
+
+
 //end user reviews
 
 
@@ -326,6 +345,10 @@ function requestProcessor($request) {
 		 return addToWatchlist($request['username'], $request['game_id'], $request['game_name']);
 		case 'get_watchlist':
 		 return getWatchlist($request['username']);
+
+                case 'get_user_reviews':
+                  return getUserReviews($request['username']);
+
 
 		default:
 		 return['success' => false, 'message' => 'invalid request'];}
