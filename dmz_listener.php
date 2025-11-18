@@ -3,6 +3,17 @@
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
+
+//get usrreviwes, testing functions to use for later
+function fetchUsrReviewsThruRMQ($username){
+	$client = new rabbitMQclient("testrabbitMQ.ini", "testServer");
+	$response = $client->send_request(['type' => 'get_user_reviews', 'username' => $username];);
+	 if(!is_array($response)|| empty($response['success'])) {return['success' false, 'reviews'=> []];}
+	return ['success' =>true, 'reviews' =>$response['reviews'] ?? [], ];
+}
+
+
+
 //moved code over from db_listener.php!
 
 //fetch api data
