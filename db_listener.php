@@ -5,6 +5,8 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 //USER AUTH
+
+//sessionKets are genrated here. different on every login (should be)
 function createSession($user_id) {
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){
@@ -23,6 +25,8 @@ function createSession($user_id) {
 	return $sessionKey;
 }
 
+//this function lets usrs login
+//is updates to use the haswed
 function doLoginDB($username, $password) {
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed']; }
@@ -48,6 +52,8 @@ function doLoginDB($username, $password) {
 	} else{return ['success' => true, 'message' => "Login successful (no key)"];}
 }
 
+//user registrs using thisfunction 
+//password is hashed here
 function doRegisterDB($username, $password){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno) {return['success' => false, 'message' => 'the database connection failed'];}
@@ -75,6 +81,8 @@ function doRegisterDB($username, $password){
 
 
 //usr email
+
+//logic and query to let usrs update they email
 function updateUserEmail($username, $email){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno)return ['success' => false, 'message' => 'DB connection failed']; 
@@ -94,7 +102,7 @@ function updateUserEmail($username, $email){
 }
 
 
-
+//is a basic email checekr
 function checkUserEmail($username){
 	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	     if($mysqli->connect_errno)return ['success' => false, 'has_email' => false, 'message' => 'DB connection failed'];
@@ -122,6 +130,8 @@ function checkUserEmail($username){
 
 
 //notifications
+
+//functin to get said notification for usr. used for multiple! important check all otehr files if you need to makie a change here
 function getNotifications($username){
 	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno) return['success' => false, 'message'=> 'DB connection failed'];
@@ -142,7 +152,7 @@ function getNotifications($username){
 }
 
 
-
+//logic for notifincations to be marked as read for front end
 function markNotificationRead($notification_id) {
 	$mysqli= new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno) return ['success'=> false, 'message' => 'DB connection failed'];
@@ -168,6 +178,9 @@ function markNotificationRead($notification_id) {
 
 
 //cache user data
+
+//each time the user searches sthin save it
+//note: get recommendations (not the personalisesd) also works should get to work on that tho, might savce us some time
 function saveUserSearch($username, $query){
 	 $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return false; };
@@ -185,6 +198,7 @@ function saveUserSearch($username, $query){
 
 
 //user reviews
+//simple get valuves and intert it tino the table of reviews
 function submitReview($username, $game_name, $rating, $review){ 
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if($mysqli->connect_errno){return['success' =>false, 'message'=> 'database connection failed']; }
@@ -201,6 +215,8 @@ function submitReview($username, $game_name, $rating, $review){
 }
 
 
+
+//get the reviews that were inserted with the previous function, !important tp front end
 function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	if ($mysqli->connect_errno) {return['success' => false, 'message' => 'connection failed'];}
 	 $stmt = $mysqli->prepare("SELECT username, rating, review, created_at from reviews WHERE game_name = ? ORDER BY created_at DESC");
@@ -217,6 +233,8 @@ function getReviews($game_name){ $mysqli = new mysqli("localhost", "authuser", "
 	return['success' => true, 'results' => $reviews]; }
 
 
+
+//function to delete the reviews speceifed by usrname and the gamenbmae
 function deleteReview($username, $game_name){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	      if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
@@ -236,6 +254,10 @@ function deleteReview($username, $game_name){
 
 
 //dmz use
+
+//update Later!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! BUGS EXIST!!!!!!!!!!!
+//dmz says hey can i get your usrs reviews? thx
+//this function gives it to dmz listener
 function getUserReviews($username){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if ($mysqli->connect_errno){ return ['success' => false,'message' => 'Database connection failed', 'reviews' => []];}
@@ -263,6 +285,7 @@ function getUserReviews($username){
 
 
 //watchlist for user
+//whenever front end usr adds a game to the watchlist, it updates the watchlist in databvse
 function addToWatchlist($username, $game_id, $game_name){
         $mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
           if($mysqli->connect_errno)return ['success' => false, 'message' => 'Database connection failed'];
@@ -284,6 +307,7 @@ function addToWatchlist($username, $game_id, $game_name){
 }
 
 
+//this one gets the usrs watchlist that are added and sends to front end so that user can see what they added
 function getWatchlist($username){
 	$mysqli = new mysqli("localhost", "authuser", "StrongPassword123!", "testdb");
 	 if($mysqli->connect_errno) return ['success'=> false, 'message'=> 'DB connection failed'];
@@ -363,6 +387,9 @@ function requestProcessor($request) {
 
 
 //Listener
+//shows which queue it conncets to for early de-bugging
+//note use in the deploemnt listener - will help a lot with debugging
+//shows the queue and the broker cost: NOTE!! 177 should be me for dev but its going to be different for each of the prod and QA since they gopt they own ips via zerotier
 echo "Database Listener starting\n";
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
 echo "connected to broker: ". $server->BROKER_HOST. "\n";
