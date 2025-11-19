@@ -11,6 +11,7 @@ $time=date('Y-m-d H:i:s');
 $logFile = '/var/www/html/game_watchlist_cron.log';
 
 //get email usr and pass from .env file
+//IMPORANTT GET RID OF TH OLD COMMIT OS THAT RANDOM USRES CANT GET YOUR PASSWORD
 $env = parse_ini_file('/var/www/html/security.env');
 $emailUser = $env['EMAIL_USER'] ?? '';
 $emailPass = $env['EMAIL_PASS'] ?? '';
@@ -20,12 +21,15 @@ if($conn->connect_errno){file_put_contents($logFile, "[$time] Connection error: 
 exit;}
 
 //api url+key
+//ask prof later abt this
 $rawgKey= 'e92e94964e714d64aa425f8c11d0996e';
 $rawgUrl= 'https://api.rawg.io/api/games?key=' . $rawgKey;
+
+//cheaopshark doesnt use any keys or stuff like tht the link wwill work good enough. thogh itd be better to implemnt this in the dmz if we need
 $cheapsharkUrl= 'https://www.cheapshark.com/api/1.0/games?title=';
 
 
-
+//quiery to get things from waychlist
 $query= "SELECT id, username, game_name, last_known_price, last_release_date, last_updated FROM watchlist";
 $result= $conn->query($query);
 
@@ -33,7 +37,9 @@ if (!$result){ file_put_contents($logFile, "[$time] Query failed: " . $conn->err
 	$conn->close();
 	exit;}
 
-
+//note fix the bugs here abt the new games and the pfies
+//also have it run every minute for the testing hpase
+//change it back so that the updatesd  would go thru only for acutal updates 
 
 $userChanges= [];
  while ($row= $result->fetch_assoc()){
@@ -48,7 +54,7 @@ $userChanges= [];
 	$currentUpdated= null;
 	$currentVersion= null;
 	
-	//rawg for game data
+	//rawg for game data, price needs to be cheaposark since rawg doesnt support prices
 	if($rawgResponse!== FALSE){$data= json_decode($rawgResponse, true);
 	$game= $data['results'][0] ?? null;
 
@@ -68,7 +74,7 @@ $userChanges= [];
 	 }
 	}
 
-	//cheapshark for price data
+	//cheapshark for price data, rawg doesnt have prices
 	$cheapResponse= @file_get_contents($cheapsharkUrl . $gameName);
 	$currentPrice= null;
 
@@ -89,6 +95,7 @@ $userChanges= [];
 
 
 	//adding notifications into the notification table
+	//frontend should be suing thuis so that the user cna see their notifications
 	 foreach($changes as $c){ if(trim($c)=== '') continue;
 	$msg= $row['game_name'] . ' — ' . $c;
 	$stmt= $conn->prepare("INSERT IGNORE INTO notifications (username, message, is_read) VALUES (?, ?, 0)");
@@ -97,6 +104,7 @@ $userChanges= [];
 	$stmt->close();}
 
         //update watchlist
+	//!bug for the waytchlsit where usr cant see and it caseshed should be fine now
 	$conn->query("UPDATE watchlist SET last_release_date = " . ($currentRelease ? "'$currentRelease'" : "NULL") . ",last_updated = " . ($currentUpdated ? "'$currentUpdated'" : "NULL") . 
 	 ", last_known_price = " . ($currentPrice ? "'$currentPrice'" : "NULL") . ", last_checked = NOW() WHERE id = {$row['id']}");
 	} else{$conn->query("UPDATE watchlist SET last_checked = NOW() WHERE id = {$row['id']}");}
@@ -106,8 +114,12 @@ $userChanges= [];
 }
 
 //send email
+//phpMailer script. shouyld get the emauils from the quiery
+//nothin crazy keep iot basic just needs to work
+//fix to be fancier later
 foreach($userChanges as $username=> $games){
 	//get usr  email
+//note implemnt sthin like this in the listener later
 	$emailQuery= "SELECT email FROM users WHERE username='$username' LIMIT 1";
 	$emailResult= $conn->query($emailQuery);
 	$emailRow = $emailResult ? $emailResult->fetch_assoc() : null;
@@ -130,7 +142,7 @@ foreach($userChanges as $username=> $games){
 	$subject = "Updates for Your Watchlist";
 	$body= "Hello $username,\n\n" . implode("\n", $bodyLines) . "\n— Game Tracker Bot\n";
 
-
+	//!IMPORTANT DO NIOT EVER PUSH TO GITHUB IF IT HAS YOUR APP PASSWORD FOR GMAIL!!!! REMOVE THE OLD PUSHED COMMIT SO THAT NONE CAN GET ACCESS TO YOUYRE GMAIL!!!!!
 	$mail= new PHPMailer(true);
 	try{ 
 	$mail->isSMTP();
